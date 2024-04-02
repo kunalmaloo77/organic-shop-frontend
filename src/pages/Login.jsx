@@ -45,7 +45,7 @@ const Login = () => {
 
   const addUser = async (user) => {
     try {
-      const res = await axios.post('http://localhost:8080/users', user, { withCredentials: true });
+      const res = await axios.post('https://organic-shop-backend.vercel.app/users', user, { withCredentials: true });
       console.log(res.data);
       setLoggedIn(true);
     } catch (error) {
@@ -55,7 +55,7 @@ const Login = () => {
 
   const loginUser = async (user) => {
     try {
-      const res = await axios.post('http://localhost:8080/auth/login/password', user, { withCredentials: true });
+      const res = await axios.post('https://organic-shop-backend.vercel.app/auth/login/password', user, { withCredentials: true });
       console.log(res);
       if (res.status === 200) {
         setLoggedIn(true);
@@ -72,7 +72,7 @@ const Login = () => {
 
   const checkAuthenticated = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/auth/login', { withCredentials: true });
+      const res = await axios.get('https://organic-shop-backend.vercel.app/auth/login', { withCredentials: true });
       console.log('res->', res);
       if (res.data.authenticated) {
         setLoggedIn(true);
@@ -92,7 +92,7 @@ const Login = () => {
 
   const handlelogout = async () => {
     try {
-      const res = await axios.delete('http://localhost:8080/auth/logout', { withCredentials: true });
+      const res = await axios.delete('https://organic-shop-backend.vercel.app/auth/logout', { withCredentials: true });
       console.log('res->', res);
       if (res.status === 200) {
         setLoggedIn(false);
