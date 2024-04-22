@@ -8,6 +8,7 @@ import { signUpSchema } from '../schemas'
 const Login = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [message, setMessage] = useState('');
+  const [registrationMessage, setRegistrationMessage] = useState('');
 
   useEffect(() => {
     checkAuthenticated();
@@ -45,11 +46,19 @@ const Login = () => {
 
   const addUser = async (user) => {
     try {
-      const res = await axios.post('https://organic-shop-backend.vercel.app/users', user, { withCredentials: true });
+      const res = await axios.post('http://localhost:8080/users', user, { withCredentials: true });
       console.log(res.data);
-      setLoggedIn(true);
+      if (res.status === 201) {
+        setLoggedIn(true);
+      }
     } catch (error) {
-      console.log("Registration error:", error);
+      if (error.response.status === 409) {
+        console.log("User Already exists", error);
+        setRegistrationMessage(error.response.data.error);
+      }
+      else {
+        console.log("Registration error:", error);
+      }
     }
   }
 
@@ -177,6 +186,7 @@ const Login = () => {
 
               {/* Signup Column */}
               <div className="md:w-1/2 p-8">
+                {registrationMessage ? <h1 className='text-red-500'>{registrationMessage}</h1> : null}
                 <h2 className="text-2xl mb-6 text-center font-bold">Sign Up</h2>
                 <form onSubmit={formik_signup.handleSubmit}>
                   <div className="mb-4">
