@@ -13,6 +13,7 @@ const Login = () => {
   const backendUrl = process.env.NODE_ENV === 'development'
     ? process.env.REACT_APP_BACKEND_URL_DEVELOPMENT
     : process.env.REACT_APP_BACKEND_URL_PRODUCTION;
+  console.log(backendUrl, '<- backendUrl');
 
   useEffect(() => {
     const checkAuthenticated = async () => {
