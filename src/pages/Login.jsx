@@ -10,9 +10,32 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [registrationMessage, setRegistrationMessage] = useState('');
 
+  const backendUrl = process.env.NODE_ENV === 'development'
+    ? process.env.REACT_APP_BACKEND_URL_DEVELOPMENT
+    : process.env.REACT_APP_BACKEND_URL_PRODUCTION;
+
   useEffect(() => {
+    const checkAuthenticated = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}/auth/login`, { withCredentials: true });
+        console.log('res->', res);
+        if (res.data.authenticated) {
+          setLoggedIn(true);
+        }
+        else {
+          setLoggedIn(false);
+        }
+      } catch (error) {
+        console.log("error:", error);
+        if (error.response && error.response.status === 401) {
+          setLoggedIn(false)
+        } else {
+          console.error('Error fetching login page:', error);
+        }
+      }
+    }
     checkAuthenticated();
-  }, [])
+  }, [backendUrl])
 
   const formik_login = useFormik(
     {
@@ -46,7 +69,7 @@ const Login = () => {
 
   const addUser = async (user) => {
     try {
-      const res = await axios.post('http://localhost:8080/users', user, { withCredentials: true });
+      const res = await axios.post(`${backendUrl}/users`, user, { withCredentials: true });
       console.log(res.data);
       if (res.status === 201) {
         setLoggedIn(true);
@@ -64,7 +87,7 @@ const Login = () => {
 
   const loginUser = async (user) => {
     try {
-      const res = await axios.post('https://organic-shop-backend.vercel.app/auth/login/password', user, { withCredentials: true });
+      const res = await axios.post(`${backendUrl}/auth/login/password`, user, { withCredentials: true });
       console.log(res);
       if (res.status === 200) {
         setLoggedIn(true);
@@ -79,29 +102,9 @@ const Login = () => {
     }
   }
 
-  const checkAuthenticated = async () => {
-    try {
-      const res = await axios.get('https://organic-shop-backend.vercel.app/auth/login', { withCredentials: true });
-      console.log('res->', res);
-      if (res.data.authenticated) {
-        setLoggedIn(true);
-      }
-      else {
-        setLoggedIn(false);
-      }
-    } catch (error) {
-      console.log("error:", error);
-      if (error.response && error.response.status === 401) {
-        setLoggedIn(false)
-      } else {
-        console.error('Error fetching login page:', error);
-      }
-    }
-  }
-
   const handlelogout = async () => {
     try {
-      const res = await axios.delete('https://organic-shop-backend.vercel.app/auth/logout', { withCredentials: true });
+      const res = await axios.delete(`${backendUrl}/auth/logout`, { withCredentials: true });
       console.log('res->', res);
       if (res.status === 200) {
         setLoggedIn(false);
@@ -186,8 +189,8 @@ const Login = () => {
 
               {/* Signup Column */}
               <div className="md:w-1/2 p-8">
-                {registrationMessage ? <h1 className='text-red-500'>{registrationMessage}</h1> : null}
                 <h2 className="text-2xl mb-6 text-center font-bold">Sign Up</h2>
+                {registrationMessage ? <h1 className='text-red-500'>{registrationMessage}</h1> : null}
                 <form onSubmit={formik_signup.handleSubmit}>
                   <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="signupName">
