@@ -12,6 +12,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const [loggedIn, setLoggedIn] = useState(false);
   const [message, setMessage] = useState('');
+  const [name, setName] = useState('');
   const [registrationMessage, setRegistrationMessage] = useState('');
 
   const backendUrl = process.env.NODE_ENV === 'development'
@@ -26,6 +27,8 @@ const Login = () => {
         console.log('res->', res);
         if (res.data.authenticated) {
           setLoggedIn(true);
+          setName((res.data.user).charAt(0).toUpperCase()
+            + (res.data.user).slice(1));
         }
         else {
           setLoggedIn(false);
@@ -102,6 +105,8 @@ const Login = () => {
       console.log(res);
       if (res.status === 200) {
         setLoggedIn(true);
+        setName((res.data.user.name).charAt(0).toUpperCase()
+          + (res.data.user.name).slice(1));
       }
       dispatch(stopLoading());
     } catch (error) {
@@ -137,7 +142,7 @@ const Login = () => {
               <div className="flex w-full max-w-4xl justify-center">
                 {/* Logout Column */}
                 <div className="p-8">
-                  <h2 className="text-4xl mb-10 text-center font-bold font-merriweather">Welcome to Organic Store!</h2>
+                  <h2 className="text-4xl mb-10 text-center font-bold font-merriweather">Welcome to Organic Store {name}!</h2>
                   <div className="flex items-center justify-center">
                     <button
                       className="bg-[#6a9739] hover:bg-[#8bc34a] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2"
