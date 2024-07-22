@@ -24,7 +24,7 @@ export default function App() {
       <Cart />
       <MobNav />
       <TopLoadingBar />
-      <ToastContainer autoClose={1000} />
+      <ToastContainer autoClose={1250} />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -6,6 +6,7 @@ import axios from 'axios'
 import { signUpSchema } from '../schemas'
 import { useDispatch } from 'react-redux'
 import { startLoading, stopLoading } from '../features/loadingSlice'
+import { toast } from 'react-toastify'
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -31,9 +32,11 @@ const Login = () => {
         }
         dispatch(stopLoading());
       } catch (error) {
+        dispatch(stopLoading());
         console.log("error:", error);
         if (error.response && error.response.status === 401) {
-          setLoggedIn(false)
+          toast.info('Please Login or Signup');
+          setLoggedIn(false);
         } else {
           console.error('Error fetching login page:', error);
         }
