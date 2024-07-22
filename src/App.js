@@ -14,11 +14,17 @@ import MobNav from "./components/MobNav";
 import CartPage from "./pages/CartPage";
 import Checkout from "./pages/Checkout";
 import ScrollToTop from "./components/ScrollToTop";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import TopLoadingBar from "./components/Loading Bar/LoadingBar";
+
 export default function App() {
   return (
     <div>
       <Cart />
       <MobNav />
+      <TopLoadingBar />
+      <ToastContainer autoClose={1000} />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,7 +6,6 @@ import { isVisibleAction, isVisibleMobileAction } from "../features/addtocartSli
 import { useMediaQuery } from "react-responsive";
 
 function Header(props) {
-
   const isDesktop = useMediaQuery({
     query: '(min-width : 920px)'
   })

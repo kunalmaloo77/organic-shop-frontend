@@ -4,8 +4,11 @@ import Footer from '../components/Footer'
 import { useFormik } from 'formik'
 import axios from 'axios'
 import { signUpSchema } from '../schemas'
+import { useDispatch } from 'react-redux'
+import { startLoading, stopLoading } from '../features/loadingSlice'
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [loggedIn, setLoggedIn] = useState(false);
   const [message, setMessage] = useState('');
   const [registrationMessage, setRegistrationMessage] = useState('');
@@ -13,11 +16,11 @@ const Login = () => {
   const backendUrl = process.env.NODE_ENV === 'development'
     ? process.env.REACT_APP_BACKEND_URL_DEVELOPMENT
     : process.env.REACT_APP_BACKEND_URL_PRODUCTION;
-  console.log(backendUrl, '<- backendUrl');
 
   useEffect(() => {
     const checkAuthenticated = async () => {
       try {
+        dispatch(startLoading());
         const res = await axios.get(`${backendUrl}/auth/login`, { withCredentials: true });
         console.log('res->', res);
         if (res.data.authenticated) {
@@ -26,6 +29,7 @@ const Login = () => {
         else {
           setLoggedIn(false);
         }
+        dispatch(stopLoading());
       } catch (error) {
         console.log("error:", error);
         if (error.response && error.response.status === 401) {
@@ -36,7 +40,7 @@ const Login = () => {
       }
     }
     checkAuthenticated();
-  }, [backendUrl])
+  }, [backendUrl, dispatch])
 
   const formik_login = useFormik(
     {
@@ -70,11 +74,13 @@ const Login = () => {
 
   const addUser = async (user) => {
     try {
+      dispatch(startLoading());
       const res = await axios.post(`${backendUrl}/users`, user, { withCredentials: true });
       console.log(res.data);
       if (res.status === 201) {
         setLoggedIn(true);
       }
+      dispatch(stopLoading());
     } catch (error) {
       if (error.response.status === 409) {
         console.log("User Already exists", error);
@@ -88,11 +94,13 @@ const Login = () => {
 
   const loginUser = async (user) => {
     try {
+      dispatch(startLoading());
       const res = await axios.post(`${backendUrl}/auth/login/password`, user, { withCredentials: true });
       console.log(res);
       if (res.status === 200) {
         setLoggedIn(true);
       }
+      dispatch(stopLoading());
     } catch (error) {
       if (error.response && error.response.status === 401) {
         setMessage(error.response.data.error);
@@ -105,11 +113,13 @@ const Login = () => {
 
   const handlelogout = async () => {
     try {
+      dispatch(startLoading());
       const res = await axios.delete(`${backendUrl}/auth/logout`, { withCredentials: true });
       console.log('res->', res);
       if (res.status === 200) {
         setLoggedIn(false);
       }
+      dispatch(stopLoading());
     } catch (error) {
       console.log('error logging out->', error);
     }
