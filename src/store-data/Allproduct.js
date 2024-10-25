@@ -121,4 +121,13 @@ export const products = [
     "key": "13",
     "description": "Neque porro quisquam est, qui dolore ipsum quia dolor sit amet, consectetur adipisci velit, sed quia non incidunt lores ta porro ame. numquam eius modi tempora incidunt lores ta porro ame."
   },
+  {
+    "title": "Juice",
+    "name": "Fresh Lemonade",
+    "price": "10.00",
+    "image": "lemon-juice-400x400.jpg",
+    "smallimage": "lemon-juice-300x300.jpg",
+    "key": "14",
+    "description": "Neque porro quisquam est, qui dolore ipsum quia dolor sit amet, consectetur adipisci velit, sed quia non incidunt lores ta porro ame. numquam eius modi tempora incidunt lores ta porro ame."
+  },
 ]
