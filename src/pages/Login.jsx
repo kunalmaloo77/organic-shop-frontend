@@ -4,13 +4,14 @@ import Footer from "../components/Footer";
 import { useFormik } from "formik";
 import axios from "axios";
 import { signUpSchema } from "../schemas";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { startLoading, stopLoading } from "../features/loadingSlice";
-import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const dispatch = useDispatch();
   const [loggedIn, setLoggedIn] = useState(false);
+  const isLoading = useSelector((state) => state.loading.isLoading);
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [registrationMessage, setRegistrationMessage] = useState("");
@@ -27,7 +28,6 @@ const Login = () => {
         const res = await axios.get(`${backendUrl}/auth/login`, {
           withCredentials: true,
         });
-        console.log("res->", res);
         if (res.data.authenticated) {
           setLoggedIn(true);
           setName(
@@ -41,7 +41,6 @@ const Login = () => {
         dispatch(stopLoading());
         console.log("error:", error);
         if (error.response && error.response.status === 401) {
-          toast.info("Please Login or Signup");
           setLoggedIn(false);
         } else {
           console.error("Error fetching login page:", error);
@@ -85,10 +84,7 @@ const Login = () => {
       });
       if (res.status === 201) {
         setLoggedIn(true);
-        setName(
-          res.data.name.charAt(0).toUpperCase() +
-            res.data.name.slice(1)
-        );
+        setName(res.data.name.charAt(0).toUpperCase() + res.data.name.slice(1));
       }
       dispatch(stopLoading());
     } catch (error) {
@@ -140,6 +136,7 @@ const Login = () => {
       console.log("error logging out->", error);
     }
   };
+
   return (
     <>
       <Header />
@@ -149,11 +146,19 @@ const Login = () => {
             <div className="flex w-full max-w-4xl justify-center">
               {/* Logout Column */}
               <div className="p-8">
-                <h2 className="text-4xl mb-10 text-center font-bold font-merriweather">
-                  Welcome to Organic Store {name}!
-                </h2>
+                {isLoading ? (
+                  <div className="h-full flex items-center justify-center">
+                    <Loader2 className="animate-spin size-6 text-mutead-foreground" />
+                  </div>
+                ) : (
+                  <h2 className="text-4xl mb-10 text-center font-bold font-merriweather">
+                    Welcome to Organic Store {name}!
+                  </h2>
+                )}
+
                 <div className="flex items-center justify-center">
                   <button
+                    disabled={isLoading}
                     className="bg-[#6a9739] hover:bg-[#8bc34a] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2"
                     onClick={handlelogout}
                   >
@@ -164,6 +169,10 @@ const Login = () => {
             </div>
           </div>
         </>
+      ) : isLoading ? (
+        <div className="h-full flex items-center justify-center">
+          <Loader2 className="animate-spin size-6 text-mutead-foreground" />
+        </div>
       ) : (
         <>
           <div className="bg-content-background">
@@ -214,6 +223,7 @@ const Login = () => {
                     </div>
                     <div className="flex items-center justify-center">
                       <button
+                        disabled={isLoading}
                         className="bg-[#6a9739] hover:bg-[#8bc34a] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                       >
@@ -334,6 +344,7 @@ const Login = () => {
                     </div>
                     <div className="flex items-center justify-center">
                       <button
+                        disabled={isLoading}
                         type="submit"
                         className="bg-[#6a9739] hover:bg-[#8bc34a] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       >

@@ -14,7 +14,7 @@ const FoodPreview = () => {
                 title={foodItem.title}
                 desc={foodItem.desc}
                 key={foodItem.key}
-                image={require(`../images/${foodItem.image}`)}
+                image={`../images/${foodItem.image}`}
               />
             );
           })}
