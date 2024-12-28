@@ -1,4 +1,7 @@
 {
     "editor.defaultFormatter": "svipas.prettier-plus",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

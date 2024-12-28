@@ -147,30 +147,31 @@ const Login = () => {
               {/* Logout Column */}
               <div className="p-8">
                 {isLoading ? (
-                  <div className="h-full flex items-center justify-center">
-                    <Loader2 className="animate-spin size-6 text-mutead-foreground" />
+                  <div className="mb-10">
+                    <Loader2 className="animate-spin size-6 text-muted-foreground" />
                   </div>
                 ) : (
-                  <h2 className="text-4xl mb-10 text-center font-bold font-merriweather">
-                    Welcome to Organic Store {name}!
-                  </h2>
+                  <>
+                    <h2 className="text-4xl mb-10 text-center font-bold font-merriweather">
+                      Welcome to Organic Store {name}!
+                    </h2>
+                    <div className="flex items-center justify-center">
+                      <button
+                        disabled={isLoading}
+                        className="bg-[#6a9739] hover:bg-[#8bc34a] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2"
+                        onClick={handlelogout}
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </>
                 )}
-
-                <div className="flex items-center justify-center">
-                  <button
-                    disabled={isLoading}
-                    className="bg-[#6a9739] hover:bg-[#8bc34a] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-1/2"
-                    onClick={handlelogout}
-                  >
-                    Logout
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </>
       ) : isLoading ? (
-        <div className="h-full flex items-center justify-center">
+        <div className="h-screen flex items-center justify-center bg-content-background">
           <Loader2 className="animate-spin size-6 text-mutead-foreground" />
         </div>
       ) : (
