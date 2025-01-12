@@ -113,6 +113,7 @@ const Login = () => {
       }
       dispatch(stopLoading());
     } catch (error) {
+      dispatch(stopLoading());
       if (error.response && error.response.status === 401) {
         setMessage(error.response.data.error);
       } else {
