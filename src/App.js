@@ -1,24 +1,32 @@
-import React from "react";
-import Home from "./pages/Home";
-import About from "./pages/About";
+import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 import { Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
+import "react-toastify/dist/ReactToastify.css";
+import Home from "./pages/Home";
+import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
-import Juice from "./pages/product category/Juice";
-import Grocery from "./pages/product category/Grocery";
-import Everything from "./pages/product category/Everything"
+import Everything from "./pages/product category/Everything";
 import ProductPage from "./components/ProductPage";
 import Cart from "./components/Cart";
 import MobNav from "./components/MobNav";
 import CartPage from "./pages/CartPage";
 import Checkout from "./pages/Checkout";
 import ScrollToTop from "./components/ScrollToTop";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import TopLoadingBar from "./components/Loading Bar/LoadingBar";
+import Orders from "./pages/Orders";
+import { checkAuthStatus } from "./features/authSlice";
+import ProtectedRouteLayout from "./routes/ProtectedRouteLayout";
+import ProfilePage from "./pages/Profile";
 
 export default function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(checkAuthStatus());
+  }, [dispatch]);
+
   return (
     <div>
       <Cart />
@@ -31,12 +39,16 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/product-category/juice" element={<Juice />} />
-        <Route path="/product-category/grocery" element={<Grocery />} />
-        <Route path="/product-category/shop" element={<Everything />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/product-category/juice" element={<Everything />} />
+        <Route path="/product-category/grocery" element={<Everything />} />
+        <Route path="/product-category/shop" element={<Everything />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route element={<ProtectedRouteLayout />}>
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
       </Routes>
     </div>
   );

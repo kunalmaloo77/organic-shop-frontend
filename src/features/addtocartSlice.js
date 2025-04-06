@@ -28,10 +28,9 @@ const addtocartSlice = createSlice({
   },
   reducers: {
     updateItemQuantity(state, action) {
-      const { key, quantity } = action.payload;
+      const { id, quantity } = action.payload;
       const updatedItems = state.items.map(item => {
-        if (item.key === key) {
-          console.log(item.quantity);
+        if (item._id === id) {
           return {
             ...item,
             quantity: item.quantity + quantity // Update the quantity of the specific item
@@ -45,9 +44,9 @@ const addtocartSlice = createSlice({
       toast.success("cart updated");
     },
     updateItemCart(state, action) {
-      const { key, quantity } = action.payload;
+      const { id, quantity } = action.payload;
       const updatedItems = state.items.map(item => {
-        if (item.key === key) {
+        if (item._id === id) {
           state.totalQuantity -= (item.quantity - quantity);
           return {
             ...item,

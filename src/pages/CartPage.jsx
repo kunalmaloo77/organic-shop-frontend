@@ -14,12 +14,10 @@ import Footer from "../components/Footer";
 const CartPage = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.addtocart.items);
-  const handleChange = (e, key) => {
-    console.log(parseInt(e.target.value));
-    dispatch(updateItemCart({ key: key, quantity: e.target.value }));
+  const handleChange = (e, id) => {
+    dispatch(updateItemCart({ id: id, quantity: e.target.value }));
   };
   function removeItem(key, quantity) {
-    console.log(key);
     dispatch(removefromcartAction(key));
     dispatch(totalQuantityAction(-quantity));
   }
@@ -79,9 +77,7 @@ const CartPage = () => {
                             <td className="border-b border-slate-300">
                               <div className="flex justify-center">
                                 <img
-                                  src={require(
-                                    `../images/products 300 x 300/${item.smallimage}`,
-                                  )}
+                                  src={item.small_image_url}
                                   alt="itemImage"
                                   className="h-32 w-32 p-4"
                                 />
@@ -115,7 +111,7 @@ const CartPage = () => {
                                     value={item.quantity}
                                     min={1}
                                     className="w-10 text-center"
-                                    onChange={(e) => handleChange(e, item.key)}
+                                    onChange={(e) => handleChange(e, item._id)}
                                   />
                                 </form>
                               </div>
