@@ -3,7 +3,7 @@ export const foodData = [
         "title": "Fresh Warm Fruits",
         "desc": "Ut sollicitudin quam vel purus tempus, vel eleifend felis varius.",
         "image": "product11-free-img.jpg",
-        "key": "1"  
+        "key": "1"
     },
     {
         "title": "Fresh Vegetables",

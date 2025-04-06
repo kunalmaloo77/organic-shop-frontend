@@ -14,7 +14,7 @@ const FoodPreview = () => {
                 title={foodItem.title}
                 desc={foodItem.desc}
                 key={foodItem.key}
-                image={`../images/${foodItem.image}`}
+                image={require(`../images/${foodItem.image}`)}
               />
             );
           })}
@@ -32,16 +32,22 @@ const FoodPreview = () => {
               <button className=" text-white font-medium w-40">SHOP NOW</button>
             </div>
           </div>
-
         </div>
         <div className="relative">
           <div className="flex justify-center absolute -top-3 left-1/2">
-            <FontAwesomeIcon icon={faPlay} rotation={90} size="2xl" style={{ color: "#000000" }} />
+            <FontAwesomeIcon
+              icon={faPlay}
+              rotation={90}
+              size="2xl"
+              style={{ color: "#000000" }}
+            />
           </div>
         </div>
 
         <div className="flex justify-center text-center">
-          <p className="text-2xl p-10 font-serif font-semibold">Try It For Free. No Registration Needed.</p>
+          <p className="text-2xl p-10 font-serif font-semibold">
+            Try It For Free. No Registration Needed.
+          </p>
         </div>
       </div>
     </>
