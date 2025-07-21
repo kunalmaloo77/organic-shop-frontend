@@ -43,7 +43,7 @@ const About = () => {
       </div>
       <div className="flex justify-center">
         <img
-          src="../images/basil-leaf.png"
+          src="/images/basil-leaf.png"
           alt="basil"
           className="w-32 md:w-40 mt-[-28px] pb-[8px]"
         ></img>
@@ -70,7 +70,7 @@ const About = () => {
           </p>
         </div>
         <img
-          src="../images/banner-01.jpg"
+          src="/images/banner-01.jpg"
           alt="banner"
           className="p-8 md:p-0 w-full md:h-1/2 md:w-1/2"
         />
@@ -134,7 +134,7 @@ const About = () => {
             <div className="flex flex-col md:flex-row mb-10 lg:mb-10 justify-center">
               <div className="flex justify-center md:h-20 md:pr-10 mb-7 md:mb-0">
                 <img
-                  src="../images/organic-badge-freeimg.png"
+                  src="/images/organic-badge-freeimg.png"
                   alt="organic badge"
                 />
               </div>
@@ -155,7 +155,7 @@ const About = () => {
             </div>
             <div>
               <img
-                src="../images/logo-leaf-new.png"
+                src="/images/logo-leaf-new.png"
                 alt="leaf"
                 className="py-4"
               />

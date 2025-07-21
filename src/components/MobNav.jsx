@@ -64,7 +64,7 @@ const MobNav = () => {
         >
           <Link to="/profile">
             <div className="py-4 pl-6 mt-4">
-              <img src="../images/user.png" className="h-5 w-5" alt="" />
+              <img src="/images/user.png" className="h-5 w-5" alt="" />
             </div>
           </Link>
           <Link to="/product-category/shop">

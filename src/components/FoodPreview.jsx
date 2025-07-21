@@ -13,7 +13,7 @@ const FoodPreview = () => {
               title={foodItem.title}
               desc={foodItem.desc}
               key={foodItem.key}
-              image={`../images/${foodItem.image}`}
+              image={`/images/${foodItem.image}`}
             />
           );
         })}

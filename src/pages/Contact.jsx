@@ -35,7 +35,7 @@ const Contact = () => {
       </div>
       <div className="flex flex-col justify-center items-center m-6 lg:max-w-[1200px] xl:mx-auto shadow-lg -mt-10 bg-white rounded-md mb-24">
         <div className="w-32 -mt-6 mb-10">
-          <img src="../images/basil-leaf.png" alt="leaf" />
+          <img src="/images/basil-leaf.png" alt="leaf" />
         </div>
         <div className="flex flex-col md:flex-row mb-10 w-full justify-center">
           <div className="flex-1 flex flex-col p-10 text-center border-2 m-2 md:ml-6">
@@ -88,7 +88,7 @@ const Contact = () => {
         </div>
         <div>
           <img
-            src="../images/logo-leaf-new.png"
+            src="/images/logo-leaf-new.png"
             alt="leaf2"
             className="w-24 md:w-32"
           />

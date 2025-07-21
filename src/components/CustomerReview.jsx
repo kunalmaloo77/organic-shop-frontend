@@ -9,7 +9,7 @@ const CustomerReview = () => {
             Customers Reviews
           </h1>
           <img
-            src={"../images/logo-leaf-new.png"}
+            src={"/images/logo-leaf-new.png"}
             alt="logo leaf"
             className="w-20 md:mb-20"
           />

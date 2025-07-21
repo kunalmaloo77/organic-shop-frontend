@@ -6,13 +6,13 @@ import "./swiper.css";
 
 export default function Slideshow() {
   const img1 =
-    "../../images/farming04-free-img-o9xdxvnzch1gu353cc71s2fv9hgs2o8e1ubsjmmia0.jpg";
+    "/images/farming04-free-img-o9xdxvnzch1gu353cc71s2fv9hgs2o8e1ubsjmmia0.jpg";
   const img2 =
-    "../../images/image-01-ok9t8tqfmw86q6a5qjwdw95uon8m0ro8dme893gop4.jpg";
+    "/images/image-01-ok9t8tqfmw86q6a5qjwdw95uon8m0ro8dme893gop4.jpg";
   const img3 =
-    "../../images/image-02-ok9thlk7f88j35jeicf161gqa3zxv2i1l1ldi2gemg.jpg";
+    "/images/image-02-ok9thlk7f88j35jeicf161gqa3zxv2i1l1ldi2gemg.jpg";
   const img4 =
-    "../../images/farming03-free-img-o9vzqvrix9ebgtwlxr5iwk27s1xblzkum1b4ivvlzc.jpg";
+    "/images/farming03-free-img-o9vzqvrix9ebgtwlxr5iwk27s1xblzkum1b4ivvlzc.jpg";
 
   return (
     <Swiper
