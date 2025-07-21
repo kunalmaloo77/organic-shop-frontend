@@ -20,6 +20,7 @@ import Orders from "./pages/Orders";
 import { checkAuthStatus } from "./features/authSlice";
 import ProtectedRouteLayout from "./routes/ProtectedRouteLayout";
 import ProfilePage from "./pages/Profile";
+import OrderDetail from "./pages/OrderDetail";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/order-review/:orderId" element={<OrderDetail />} />
         </Route>
       </Routes>
     </div>

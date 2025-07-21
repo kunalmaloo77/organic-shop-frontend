@@ -3,10 +3,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import axios from "axios";
 import backendUrl from "../config";
+import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
   // Sample order data - in a real app, this would come from an API
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
   // State for order filter
   const [statusFilter, setStatusFilter] = useState("All");
@@ -39,6 +41,11 @@ const Orders = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const handleOrderDetails = (orderId) => {
+    navigate(`/order-review/${orderId}`);
+  };
+
+  // Fetch orders from API
   useEffect(() => {
     async function fetchOrders() {
       try {
@@ -46,8 +53,7 @@ const Orders = () => {
           withCredentials: true,
         });
         const formattedOrders = res.data.map((order) => {
-          const formattedOrderId =
-            "#ORD-" + order.razorpayOrderId.split("_")[1].toUpperCase();
+          const formattedOrderId = "#ORD-" + order._id.slice(-6).toUpperCase();
           return { ...order, formattedOrderId };
         });
 
@@ -129,19 +135,19 @@ const Orders = () => {
                           className="flex items-center justify-between text-sm"
                         >
                           <div className="flex items-center">
-                            {item.productId.small_image_url && (
+                            {item.product.small_image_url && (
                               <img
-                                src={item.productId.small_image_url}
-                                alt={item.productId.name}
+                                src={item.product.small_image_url}
+                                alt={item.product.name}
                                 className="w-12 h-12 object-cover rounded mr-3"
                               />
                             )}
                             <span className="text-gray-600">
-                              {item.quantity} × {item.productId.name}
+                              {item.quantity} × {item.product.name}
                             </span>
                           </div>
                           <span className="text-gray-900 font-medium">
-                            ${(item.productId.price * item.quantity).toFixed(2)}
+                            ${(item.product.price * item.quantity).toFixed(2)}
                           </span>
                         </div>
                       ))}
@@ -164,16 +170,13 @@ const Orders = () => {
                         {order.paymentMethod}
                       </span>
                     </p>
-                    <p className="text-sm text-gray-500">
-                      Customer:{" "}
-                      <span className="font-medium text-gray-900">
-                        {order.customer}
-                      </span>
-                    </p>
                   </div>
 
                   <div className="flex space-x-2">
-                    <button className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <button
+                      onClick={() => handleOrderDetails(order._id)}
+                      className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
                       Order Details
                     </button>
                     {order.status !== "Delivered" &&

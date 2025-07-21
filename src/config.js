@@ -1,6 +1,5 @@
-const backendUrl =
-process.env.NODE_ENV === "development"
-? process.env.REACT_APP_BACKEND_URL_DEVELOPMENT
-: process.env.REACT_APP_BACKEND_URL_PRODUCTION;
+const backendUrl = import.meta.env.DEV
+  ? import.meta.env.VITE_BACKEND_URL_DEVELOPMENT
+  : import.meta.env.VITE_BACKEND_URL_PRODUCTION;
 
 export default backendUrl;

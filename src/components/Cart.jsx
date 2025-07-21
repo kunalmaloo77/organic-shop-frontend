@@ -14,14 +14,12 @@ const Cart = () => {
   const isVisible = useSelector((state) => state.addtocart.IsVisible);
   const cartItems = useSelector((state) => state.addtocart.items);
   // const totalQuantity = useSelector((state) => state.addtocart.totalQuantity);
-  let sum = 0;
 
-  cartItems.map((item) => {
-    return (sum += item.price * item.quantity);
-  });
+  const sum = cartItems.reduce((acc, item) => {
+    return (acc += item.price * item.quantity);
+  }, 0);
 
   function removeItem(key, quantity) {
-    console.log(key);
     dispatch(removefromcartAction(key));
     dispatch(totalQuantityAction(-quantity));
   }

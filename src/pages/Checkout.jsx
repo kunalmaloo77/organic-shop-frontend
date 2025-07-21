@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp } from "@fortawesome/free-solid-svg-icons";
@@ -7,9 +8,12 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import FormCheckout from "../components/FormCheckout";
 import backendUrl from "../config";
+import { emptyCartAction } from "../features/addtocartSlice";
 
 const Checkout = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [selectedOption, setSelectedOption] = useState("online");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -22,98 +26,97 @@ const Checkout = () => {
     phone: "",
     email: "",
   });
+  const [formErrors, setFormErrors] = useState({});
   const cartItems = useSelector((state) => state.addtocart.items);
-  let sum = 0;
-  cartItems.map((item) => {
-    return (sum += item.price * item.quantity);
-  });
+
+  // Calculate total
+  let sum = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   const handleRadioChange = (event) => {
     setSelectedOption(event.target.value);
   };
 
-  const loadScript = (src) => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
+  // Form validation
+  const validateForm = () => {
+    const errors = {};
+    const requiredFields = [
+      "firstName",
+      "lastName",
+      "address",
+      "pincode",
+      "city",
+      "state",
+      "phone",
+      "email",
+    ];
+
+    requiredFields.forEach((field) => {
+      if (!formData[field]) {
+        errors[field] = `${field
+          .replace(/([A-Z])/g, " $1")
+          .toLowerCase()} is required`;
+      }
     });
+
+    // Email validation
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Email is invalid";
+    }
+
+    // Phone validation
+    if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
+      errors.phone = "Phone number must be 10 digits";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  // Function to display Razorpay checkout
-  const displayRazorpay = async () => {
+  // Function to handle place order
+  const handlePlaceOrder = async () => {
+    if (!validateForm()) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
     try {
-      const res = await loadScript(
-        "https://checkout.razorpay.com/v1/checkout.js"
-      );
-      if (!res) {
-        alert("Razorpay SDK failed to load. Are you online?");
-        return;
-      }
       const items = cartItems.map((item) => ({
-        productId: item._id,
+        product: item._id,
         quantity: item.quantity,
+        price: item.price,
+        name: item.name,
       }));
+
       const orderData = {
-        billingDetails: formData,
-        items,
         amount: sum,
         currency: "INR",
+        items,
+        paymentMethod: selectedOption,
+        billingDetails: formData,
       };
 
-      // Fetch order details from your backend
+      // Create the order first, regardless of payment method
       const response = await axios.post(`${backendUrl}/orders`, orderData, {
         withCredentials: true,
       });
 
-      console.log(response);
-
-      if (!response.data.order.razorpayOrderId) {
-        alert("Failed to create order");
-        return;
+      if (response.status === 201) {
+        // Redirect to order review page
+        dispatch(emptyCartAction());
+        navigate(`/order-review/${response.data.order._id}`);
+      } else {
+        alert("Failed to create order. Please try again.");
       }
-      const options = {
-        key: process.env.REACT_APP_RAZOR_PAY_API_KEY,
-        amount: sum,
-        currency: "INR",
-        name: "Organic Store",
-        description: "Order Payment",
-        image: "/logo.png",
-        order_id: response.data.order.razorpayOrderId,
-        handler: async function (response) {
-          const verificationRes = await axios.post(
-            `${backendUrl}/orders/verify-payment`,
-            {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-            },
-            { withCredentials: true }
-          );
-
-          if (verificationRes.status === 200) {
-            window.location.href = "/orders";
-          } else {
-            alert("Payment verification failed. Please contact support.");
-          }
-        },
-        prefill: {
-          name: formData.firstName + " " + formData.lastName,
-          email: formData.email,
-          contact: formData.phone,
-        },
-        theme: {
-          color: "#6a9739",
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
     } catch (error) {
-      console.log(error);
-      if (error.response.status === 401) {
+      console.error("Order creation failed:", error);
+      if (error.response?.status === 401) {
+        alert("Please login to continue");
+        navigate("/login");
+      } else {
+        alert("Failed to process your order. Please try again.");
       }
     }
   };
@@ -122,7 +125,19 @@ const Checkout = () => {
     <div>
       <Header />
       <div className="bg-content-background">
-        <div className=" max-w-[1200px] lg:mx-auto pt-20 pb-32">
+        <div className="max-w-[1200px] lg:mx-auto pt-20 pb-32">
+          {/* Show form errors if any */}
+          {Object.keys(formErrors).length > 0 && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mx-6 mb-4">
+              <p className="font-bold">Please correct the following errors:</p>
+              <ul className="list-disc ml-5">
+                {Object.values(formErrors).map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div>
             <h1 className="text-3xl font-merriweather font-semibold mb-10 ml-6">
               Checkout
@@ -136,15 +151,19 @@ const Checkout = () => {
                 </h2>
               </div>
               <div>
-                <FormCheckout setFormData={setFormData} formData={formData} />
+                <FormCheckout
+                  setFormData={setFormData}
+                  formData={formData}
+                  errors={formErrors}
+                />
               </div>
               <div className="mx-6">
                 <div className="text-xl font-merriweather pb-4 border-b-2 font-bold">
                   Additional Information
                 </div>
                 <div>
-                  <form htmlFor="additional">
-                    <div className="my-4 ">
+                  <form>
+                    <div className="my-4">
                       <div>
                         <label htmlFor="additional">
                           Order notes (optional)
@@ -154,7 +173,7 @@ const Checkout = () => {
                         <textarea
                           id="additional"
                           name="additional"
-                          className="p-2 mt-2 w-full"
+                          className="p-2 mt-2 w-full border rounded"
                         />
                       </div>
                     </div>
@@ -162,7 +181,7 @@ const Checkout = () => {
                 </div>
               </div>
             </div>
-            <div className="lg:w-[40%] border-2 p-10 m-6 ">
+            <div className="lg:w-[40%] border-2 p-10 m-6">
               <h2 className="text-xl font-merriweather font-bold mb-10">
                 Your Order
               </h2>
@@ -171,39 +190,40 @@ const Checkout = () => {
                   <p>Product</p>
                   <p>Subtotal</p>
                 </div>
-                {cartItems.map((item) => {
-                  return (
-                    <React.Fragment key={item.key}>
-                      <div className="flex justify-between py-4 border-b-2">
-                        <p>
-                          {item.name} x {item.quantity}
-                        </p>
-                        <p>£{item.price * item.quantity}.00</p>
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
+                {cartItems.map((item) => (
+                  <div
+                    key={item._id}
+                    className="flex justify-between py-4 border-b-2"
+                  >
+                    <p>
+                      {item.name} x {item.quantity}
+                    </p>
+                    <p>£{item.price * item.quantity}.00</p>
+                  </div>
+                ))}
                 <div className="flex justify-between py-4 border-b-2">
                   <p>Subtotal</p>
                   <p>£{sum}.00</p>
                 </div>
                 <div className="flex justify-between py-4 border-b-2">
                   <p>Total</p>
-                  <p>£{sum}.00</p>
+                  <p className="font-bold text-lg">£{sum}.00</p>
                 </div>
                 <div>
+                  <h3 className="font-bold mt-6 mb-2">Payment Method</h3>
                   <div className="flex flex-col space-y-4 mt-4">
                     <div>
                       <input
                         type="radio"
-                        id="check"
+                        id="online"
                         name="paymentMethod"
-                        value="check"
+                        value="online"
+                        checked={selectedOption === "online"}
                         onChange={handleRadioChange}
                         className="mr-2"
                       />
-                      <label htmlFor="check">Check payments</label>
-                      {selectedOption === "check" && (
+                      <label htmlFor="online">Online Payment (Razorpay)</label>
+                      {selectedOption === "online" && (
                         <div>
                           <div className="ml-8 -mb-[10px]">
                             <FontAwesomeIcon
@@ -214,8 +234,8 @@ const Checkout = () => {
                           </div>
                           <div className="bg-gray-200 p-4">
                             <p>
-                              Please send a check to Store Name, Store Street,
-                              Store Town, Store State / County, Store Postcode.
+                              Pay securely using credit/debit card, UPI,
+                              netbanking or wallet.
                             </p>
                           </div>
                         </div>
@@ -227,6 +247,7 @@ const Checkout = () => {
                         id="cash"
                         name="paymentMethod"
                         value="cash"
+                        checked={selectedOption === "cash"}
                         onChange={handleRadioChange}
                         className="mr-2"
                       />
@@ -250,7 +271,7 @@ const Checkout = () => {
                 </div>
                 <div className="p-4 mt-6">
                   <button
-                    onClick={displayRazorpay}
+                    onClick={handlePlaceOrder}
                     className="flex w-full justify-center bg-[#6a9739] py-3 px-5 rounded-md cursor-pointer hover:bg-[#8bc34a] transition ease-linear delay-100 text-white font-medium"
                   >
                     PLACE ORDER
