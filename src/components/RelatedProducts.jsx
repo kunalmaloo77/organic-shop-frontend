@@ -15,7 +15,6 @@ export const RelatedProducts = ({ productTitle, productKey }) => {
             params: { title: productTitle, key: productKey },
           }
         );
-        console.log("Related Products Response:", res.data);
         setRelatedProducts(res.data.products);
       } catch (error) {
         console.error("Error fetching related products:", error);

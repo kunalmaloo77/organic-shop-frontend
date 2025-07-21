@@ -9,7 +9,7 @@ const CustomerReview = () => {
             Customers Reviews
           </h1>
           <img
-            src={require("../images/logo-leaf-new.png")}
+            src={"../images/logo-leaf-new.png"}
             alt="logo leaf"
             className="w-20 md:mb-20"
           />
@@ -21,7 +21,9 @@ const CustomerReview = () => {
                 </span>
               </div>
               <p className="text-gray-700 text-center mb-6 lg:text-lg">
-                Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit. Ut elit tellus, luctus nec
+                ullamcorper mattis, pulvinar dapibus leo
               </p>
               <div className="flex justify-center items-center">
                 <img
@@ -41,7 +43,8 @@ const CustomerReview = () => {
                     Deal Of The Day 15% Off On All Vegetables!
                   </h2>
                   <p className="text-white text-center mb-10">
-                    I am text block. Click edit button to change this tex em ips.
+                    I am text block. Click edit button to change this tex em
+                    ips.
                   </p>
                 </div>
                 <button className="bg-[#6a9739] py-2 px-5 rounded-md text-white transition ease-linear delay-75 hover:bg-[#8bc34a] w-40 font-medium after:content-['_➜']">
@@ -56,7 +59,9 @@ const CustomerReview = () => {
                 </span>
               </div>
               <p className="text-gray-700 text-center mb-6 lg:text-lg">
-                Click edit button to change this text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+                Click edit button to change this text. Lorem ipsum dolor sit
+                amet, consectetur adipiscing elit. Ut elit tellus, luctus nec
+                ullamcorper mattis, pulvinar dapibus leo.
               </p>
               <div className="flex justify-center items-center">
                 <img
@@ -75,19 +80,34 @@ const CustomerReview = () => {
       <div className="flex flex-col md:flex-row justify-center items-center max-w-[1240px] mx-auto mt-20 mb-10">
         <h1 className="text-xl font-semibold">Feactured Brands:</h1>
         <div className="px-2">
-          <img src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-4.svg" alt="logo1" />
+          <img
+            src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-4.svg"
+            alt="logo1"
+          />
         </div>
         <div className="px-2">
-          <img src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-5.svg" alt="logo2" />
+          <img
+            src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-5.svg"
+            alt="logo2"
+          />
         </div>
         <div className="px-2">
-          <img src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-2.svg" alt="logo3" />
+          <img
+            src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-2.svg"
+            alt="logo3"
+          />
         </div>
         <div className="px-2">
-          <img src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-3.svg" alt="logo4" />
+          <img
+            src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-3.svg"
+            alt="logo4"
+          />
         </div>
         <div className="px-2">
-          <img src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-1.svg" alt="logo5" />
+          <img
+            src="https://websitedemos.net/organic-shop-02/wp-content/uploads/sites/465/2021/03/logo-1.svg"
+            alt="logo5"
+          />
         </div>
       </div>
     </>

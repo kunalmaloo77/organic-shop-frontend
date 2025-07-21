@@ -32,10 +32,10 @@ function Header(props) {
       {isDesktop ? (
         <div>
           <header
-            className="px-8 py-4"
+            className="flex justify-center py-2"
             style={{ backgroundColor: `${props.background}` }}
           >
-            <nav className="grid grid-cols-2 ">
+            <nav className="grid grid-cols-2 w-full px-10">
               <div className="flex items-center">
                 <div className="flex">
                   <Link to="/">
@@ -136,7 +136,7 @@ function Header(props) {
                     <li className="px-5">
                       <Link to="/profile">
                         <img
-                          src={require("../images/user.png")}
+                          src="/images/user.png"
                           className="h-5 w-5"
                           alt=""
                         ></img>

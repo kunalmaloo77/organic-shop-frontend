@@ -10,7 +10,7 @@ const ProductsPreview = ({ heading, products }) => {
           {heading}
         </h1>
         <img
-          src={require("../images/logo-leaf-new.png")}
+          src="/images/logo-leaf-new.png"
           className="m-auto pb-10 pt-6"
           alt="leaf logo"
         />

@@ -15,7 +15,9 @@ const Home = () => {
     async function getProducts() {
       try {
         const { data } = await axios.get(`${backendUrl}/products`);
-        setProducts(data);
+        if (data) {
+          setProducts(data);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -41,7 +43,7 @@ const Home = () => {
       />
       <div className="flex justify-center">
         <img
-          src={require("../images/basil-leaf.png")}
+          src="/images/basil-leaf.png"
           alt="basil"
           className="w-40 mb-[-48px] pb-[8px]"
         ></img>
