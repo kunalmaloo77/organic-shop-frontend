@@ -15,13 +15,17 @@ const Everything = () => {
   const category = location.pathname.split("/").pop();
 
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function getProducts() {
+      setLoading(true);
       try {
         const res = await axios.get(`${backendUrl}/products`);
         setProducts(res.data);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     }
     getProducts();
@@ -60,11 +64,17 @@ const Everything = () => {
         <div className="flex flex-col-reverse lg:flex-row max-w-[1260px] m-auto">
           <Filter sideProducts={filterSideProducts} products={products} />
           <div className="grow">
-            <ProductsContainer
-              heading={currentCategory.title}
-              products={filteredProducts}
-              desc={currentCategory.description}
-            />
+            {loading ? (
+              <div className="flex justify-center items-center h-96">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
+              </div>
+            ) : (
+              <ProductsContainer
+                heading={currentCategory.title}
+                products={filteredProducts}
+                desc={currentCategory.description}
+              />
+            )}
           </div>
         </div>
       </div>

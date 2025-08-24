@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { Route } from "react-router-dom";
-import { Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";

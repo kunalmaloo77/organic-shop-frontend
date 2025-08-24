@@ -29,10 +29,8 @@ export const loginUser = createAsyncThunk(
       );
       return res.data.user;
     } catch (error) {
-      return (
-        rejectWithValue(error.response?.data) || {
-          message: "Login failed",
-        }
+      return rejectWithValue(
+        error.response?.data || { message: "Login failed" }
       );
     }
   }
@@ -42,15 +40,17 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await axios.delete(`${backendUrl}/auth/logout`, {
-        withCredentials: true,
-      });
+      await axios.post(
+        `${backendUrl}/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       return null;
     } catch (error) {
-      return (
-        rejectWithValue(error.response?.data) || {
-          message: "Logout failed",
-        }
+      return rejectWithValue(
+        error.response?.data || { message: "Logout failed" }
       );
     }
   }
@@ -67,8 +67,8 @@ export const signupUser = createAsyncThunk(
       );
       return res.data;
     } catch (error) {
-      return (
-        rejectWithValue(error.response?.error) || { message: "Signup failed" }
+      return rejectWithValue(
+        error.response?.data || { message: "Signup failed" }
       );
     }
   }
@@ -105,9 +105,8 @@ const authSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(loginUser.fulfilled, (state, action) => {
+    builder.addCase(loginUser.fulfilled, (state) => {
       state.loading = false;
-      state.user = action.payload;
       state.error = null;
     });
     builder.addCase(loginUser.rejected, (state, action) => {
