@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import axios from "axios";
-import { searchFilterAction } from "../../features/filterProductsSlice";
+import { filterAction } from "../../features/filterProductsSlice";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Filter from "../../components/Filter";
@@ -29,7 +29,7 @@ const Everything = () => {
       }
     }
     getProducts();
-    dispatch(searchFilterAction([]));
+    dispatch(filterAction([]));
   }, [dispatch]);
 
   const categoryConfig = {
