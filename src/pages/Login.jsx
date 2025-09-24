@@ -6,7 +6,7 @@ import { loginSchema, signUpSchema } from "../schemas";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
 import { checkAuthStatus, loginUser, signupUser } from "../features/authSlice";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function AuthErrorMessage({ message }) {
   console.log(message, "ErrorMessage");
@@ -107,6 +107,14 @@ function LoginForm({ formik, loading, message, toggleAuthView }) {
           Sign up here
         </button>
       </p>
+      <button>
+        <Link
+          to="/forgot-password"
+          className="text-sm text-gray-600 hover:underline"
+        >
+          Forgot Password?
+        </Link>
+      </button>
     </>
   );
 }

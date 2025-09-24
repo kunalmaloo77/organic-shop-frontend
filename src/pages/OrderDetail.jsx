@@ -48,8 +48,8 @@ const OrderDetail = () => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return;
     try {
       await axios.patch(
-        `${backendUrl}/orders/${order._id}/cancel`,
-        {},
+        `${backendUrl}/orders/cancel`,
+        { id: orderId },
         { withCredentials: true }
       );
       alert("Order cancelled successfully.");
