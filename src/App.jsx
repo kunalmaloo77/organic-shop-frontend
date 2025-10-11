@@ -16,17 +16,11 @@ import Checkout from "./pages/Checkout";
 import ScrollToTop from "./components/ScrollToTop";
 import TopLoadingBar from "./components/Loading Bar/LoadingBar";
 import Orders from "./pages/Orders";
-import { checkAuthStatus } from "./features/authSlice";
 import ProtectedRouteLayout from "./routes/ProtectedRouteLayout";
 import ProfilePage from "./pages/Profile";
 import OrderDetail from "./pages/OrderDetail";
 
 export default function App() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(checkAuthStatus());
-  }, [dispatch]);
-
   return (
     <div>
       <Cart />

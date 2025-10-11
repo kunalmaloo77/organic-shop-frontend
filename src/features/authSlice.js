@@ -1,32 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import backendUrl from "../config";
 import axios from "axios";
-
-export const checkAuthStatus = createAsyncThunk(
-  "auth/checkStatus",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await axios.get(`${backendUrl}/auth/getCurrentUser`, {
-        withCredentials: true,
-      });
-      return res.data.user;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || { message: "Authentication check failed" }
-      );
-    }
-  }
-);
+import { getAuth } from "../utils/authUtils.js";
+import instance from "../utils/axios.js";
 
 export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ loginEmail, loginPassword }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${backendUrl}/auth/login`,
+      const res = await instance.post(
+        "/auth/login",
         { loginEmail, loginPassword },
         { withCredentials: true }
       );
+      const accessToken = res.data.accessToken;
+      sessionStorage.setItem("access_token", accessToken);
+      localStorage.setItem("auth", JSON.stringify(res.data.user));
+      console.log(res.data.user, "res data user");
       return res.data.user;
     } catch (error) {
       return rejectWithValue(
@@ -40,13 +30,9 @@ export const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      await axios.post(
-        `${backendUrl}/auth/logout`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      await instance.post("/auth/logout", {}, { withCredentials: true });
+      localStorage.removeItem("auth");
+      sessionStorage.removeItem("access_token");
       return null;
     } catch (error) {
       return rejectWithValue(
@@ -60,12 +46,14 @@ export const signupUser = createAsyncThunk(
   "auth/signup",
   async ({ name, email, password, confirm_password }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${backendUrl}/users`,
+      const res = await instance.post(
+        "/users",
         { name, email, password, confirm_password },
         { withCredentials: true }
       );
-      return res.data;
+      localStorage.setItem("auth", JSON.stringify(res.data.user));
+      sessionStorage.setItem("access_token", res.data.user.accessToken);
+      return res.data.user;
     } catch (error) {
       return rejectWithValue(
         error.response?.data || { message: "Signup failed" }
@@ -74,10 +62,12 @@ export const signupUser = createAsyncThunk(
   }
 );
 
+const storedUser = getAuth();
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
+    user: storedUser,
     loading: true,
     error: null,
   },
@@ -87,27 +77,15 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // check Auth
-    builder.addCase(checkAuthStatus.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(checkAuthStatus.fulfilled, (state, action) => {
-      state.user = action.payload;
-      state.loading = false;
-      state.error = null;
-    });
-    builder.addCase(checkAuthStatus.rejected, (state) => {
-      state.user = null;
-      state.loading = false;
-    });
     // Login
     builder.addCase(loginUser.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(loginUser.fulfilled, (state) => {
+    builder.addCase(loginUser.fulfilled, (state, action) => {
       state.loading = false;
       state.error = null;
+      state.user = action.payload;
     });
     builder.addCase(loginUser.rejected, (state, action) => {
       state.user = null;
@@ -128,7 +106,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload?.message || "Signup Failed";
     });
-    // logout
+    // Logout
     builder.addCase(logoutUser.fulfilled, (state) => {
       state.user = null;
       state.error = null;
@@ -139,6 +117,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { cleanError } = authSlice.actions;
+export const { clearError } = authSlice.actions;
 
 export default authSlice.reducer;

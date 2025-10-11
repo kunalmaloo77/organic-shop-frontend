@@ -5,11 +5,10 @@ import { useFormik } from "formik";
 import { loginSchema, signUpSchema } from "../schemas";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
-import { checkAuthStatus, loginUser, signupUser } from "../features/authSlice";
+import { loginUser, signupUser } from "../features/authSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function AuthErrorMessage({ message }) {
-  console.log(message, "ErrorMessage");
   if (!message) return null;
   return <p className="text-red-500 mb-4">{message}</p>;
 }
@@ -199,10 +198,6 @@ const Login = () => {
   const [isLoginView, setIsLoginView] = useState(true);
 
   useEffect(() => {
-    dispatch(checkAuthStatus());
-  }, [dispatch]);
-
-  useEffect(() => {
     if (user) {
       navigate(from, { replace: true });
     }
@@ -223,7 +218,6 @@ const Login = () => {
     onSubmit: async (values, action) => {
       try {
         await dispatch(loginUser(values)).unwrap();
-        dispatch(checkAuthStatus());
         action.resetForm();
       } catch (error) {
         const errorMessage = error?.message || error || "Login failed";
@@ -243,7 +237,6 @@ const Login = () => {
     onSubmit: async (values, action) => {
       try {
         await dispatch(signupUser(values)).unwrap();
-        dispatch(checkAuthStatus());
         action.resetForm();
       } catch (error) {
         setMessage(error);

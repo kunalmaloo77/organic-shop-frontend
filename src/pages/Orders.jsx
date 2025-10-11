@@ -5,6 +5,7 @@ import axios from "axios";
 import backendUrl from "../config";
 import { useNavigate } from "react-router-dom";
 import { Package, Calendar, CreditCard, Eye, Truck } from "lucide-react";
+import instance from "../utils/axios";
 
 const Orders = () => {
   // Sample order data - in a real app, this would come from an API
@@ -50,17 +51,14 @@ const Orders = () => {
   useEffect(() => {
     async function fetchOrders() {
       try {
-        const res = await axios.get(`${backendUrl}/orders`, {
-          withCredentials: true,
-        });
+        const res = await instance.get("/orders");
         const formattedOrders = res.data.map((order) => {
           const formattedOrderId = "#ORD-" + order._id.slice(-6).toUpperCase();
           return { ...order, formattedOrderId };
         });
-
         setOrders(formattedOrders);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching orders:", error);
       }
     }
     fetchOrders();
