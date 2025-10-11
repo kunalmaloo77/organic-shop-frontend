@@ -8,13 +8,14 @@ import FoodPreview from "../components/FoodPreview.jsx";
 import CustomerReview from "../components/CustomerReview.jsx";
 import axios from "axios";
 import backendUrl from "../config.js";
+import instance from "../utils/axios.js";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     async function getProducts() {
       try {
-        const { data } = await axios.get(`${backendUrl}/products`);
+        const { data } = await instance.get("/products");
         if (data) {
           setProducts(data);
         }

@@ -1,9 +1,9 @@
-import axios from "axios";
+import instance from "./axios";
 
 export const sendRefreshToken = async () => {
   try {
-    const res = await axios.post(
-      `${backendUrl}/auth/refresh-token`,
+    const res = await instance.post(
+      "auth/refresh-token",
       {},
       { withCredentials: true }
     );

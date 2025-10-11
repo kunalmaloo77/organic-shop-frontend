@@ -8,6 +8,7 @@ import Filter from "../../components/Filter";
 import ProductsContainer from "../../components/ProductsContainer";
 import backendUrl from "../../config";
 import { useLocation } from "react-router-dom";
+import instance from "../../utils/axios";
 
 const Everything = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const Everything = () => {
     async function getProducts() {
       setLoading(true);
       try {
-        const res = await axios.get(`${backendUrl}/products`);
+        const res = await instance.get("/products");
         setProducts(res.data);
       } catch (error) {
         console.error(error);

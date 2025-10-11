@@ -9,6 +9,7 @@ import Header from "../components/Header";
 import FormCheckout from "../components/FormCheckout";
 import backendUrl from "../config";
 import { emptyCartAction } from "../features/addtocartSlice";
+import instance from "../utils/axios";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -99,9 +100,7 @@ const Checkout = () => {
       };
 
       // Create the order first, regardless of payment method
-      const response = await axios.post(`${backendUrl}/orders`, orderData, {
-        withCredentials: true,
-      });
+      const response = await instance.post("/orders", orderData);
 
       if (response.status === 201) {
         // Redirect to order review page

@@ -14,6 +14,7 @@ import backendUrl from "../config";
 import { LoaderCircle } from "lucide-react";
 import { startLoading, stopLoading } from "../features/loadingSlice";
 import ProgressiveImage from "./ProgressiveImage";
+import instance from "../utils/axios";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -27,7 +28,7 @@ const ProductPage = () => {
     async function getProduct() {
       dispatch(startLoading());
       try {
-        const res = await axios.get(`${backendUrl}/products/${id}`);
+        const res = await instance.get(`/products/${id}`);
         setProduct(res.data);
       } catch (error) {
         console.error(error);

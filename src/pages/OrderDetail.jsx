@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import backendUrl from "../config";
+import instance from "../utils/axios";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
@@ -17,9 +16,7 @@ const OrderDetail = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/orders/${orderId}`, {
-        withCredentials: true,
-      });
+      const response = await instance.get(`/orders/${orderId}`);
       setOrder(response.data);
       setLoading(false);
     } catch (error) {
@@ -47,11 +44,7 @@ const OrderDetail = () => {
   const handleCancelOrder = async () => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return;
     try {
-      await axios.patch(
-        `${backendUrl}/orders/cancel`,
-        { id: orderId },
-        { withCredentials: true }
-      );
+      await instance.patch("/orders/cancel", { id: orderId });
       alert("Order cancelled successfully.");
       navigate("/orders");
     } catch (error) {
@@ -88,15 +81,11 @@ const OrderDetail = () => {
         description: "Order Payment",
         order_id: order.razorpayOrderId,
         handler: async function (response) {
-          const verificationRes = await axios.post(
-            `${backendUrl}/orders/verify-order`,
-            {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-            },
-            { withCredentials: true }
-          );
+          const verificationRes = await instance.post("/orders/verify-order", {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          });
 
           console.log(verificationRes);
 
