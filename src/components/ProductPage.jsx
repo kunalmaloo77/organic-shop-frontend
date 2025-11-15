@@ -127,7 +127,7 @@ const ProductPage = () => {
         <ProductDetails
           description={product.description}
           productName={product.name}
-          productKey={product.key}
+          productKey={product._id}
           productTitle={product.title}
         />
       </div>

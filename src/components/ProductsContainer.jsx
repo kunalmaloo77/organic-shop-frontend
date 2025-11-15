@@ -41,9 +41,9 @@ const ProductsContainer = ({ heading, products, desc }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {pageProducts.map((product) => {
             return (
-              <React.Fragment key={product.key}>
+              <React.Fragment key={product._id}>
                 <div>
-                  <Link to={`/product/${product.key}`}>
+                  <Link to={`/product/${product._id}`}>
                     <ProductCard {...product} />
                   </Link>
                 </div>

@@ -34,8 +34,8 @@ export const RelatedProducts = ({ productTitle, productKey }) => {
         <div className="grid md:grid-cols-3 lg:grid-cols-4 justify-center">
           {relatedProducts.map((product) => {
             return (
-              <React.Fragment key={product.key}>
-                <Link to={`/product/${product.key}`}>
+              <React.Fragment key={product._id}>
+                <Link to={`/product/${product._id}`}>
                   <div className="p-2.5">
                     <ProductCard
                       title={product.title}

@@ -33,7 +33,7 @@ const Everything = () => {
       title: "Groceries",
       description:
         "Discover the finest selection of fresh produce, dairy essentials, and pantry staples. Packed with quality, our range ensures every meal is delicious and nutritious. From locally sourced fruits to gourmet ingredients, we've got everything you need to elevate your culinary creations. Convenient, affordable, and handpicked for your satisfaction.",
-      filter: (product) => product.title === "Groceries",
+      filter: (product) => product.title === "Grocery",
     },
     juice: {
       title: "Juice",

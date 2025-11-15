@@ -19,7 +19,7 @@ const ProductsPreview = ({ heading, products }) => {
         {products.map((product) => (
           <Link
             key={product._id}
-            to={`/product/${product.key}`}
+            to={`/product/${product._id}`}
             className="p-2.5"
           >
             <ProductCard
