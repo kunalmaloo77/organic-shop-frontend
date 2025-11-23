@@ -36,7 +36,7 @@ export const ProductCardSkeleton = () => {
 const ProductsContainer = ({ heading, desc, hasActiveFilters }) => {
   const products = useSelector((state) => state.products.products);
   const totalPages = useSelector((state) => state.pagination.totalPages);
-  const loading = useSelector((state) => state.loading.isLoading);
+  const loading = useSelector((state) => state.products.loading);
   return (
     <div className="mt-6 lg:mt-16 px-4 lg:px-6 lg:pl-[3.75rem]">
       {/* Breadcrumb Navigation */}
