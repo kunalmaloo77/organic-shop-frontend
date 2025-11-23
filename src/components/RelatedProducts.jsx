@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
-import axios from "axios";
-import backendUrl from "../config";
+import instance from "../utils/axios";
 
-export const RelatedProducts = ({ productTitle, productKey }) => {
+export const RelatedProducts = ({ productTitle, productId }) => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   useEffect(() => {
     async function getRelatedProducts() {
       try {
-        const res = await axios.get(
-          `${backendUrl}/products/get-related-products`,
-          {
-            params: { title: productTitle, key: productKey },
-          }
-        );
-        setRelatedProducts(res.data.products);
+        const {
+          data: {
+            data: { products },
+          },
+        } = await instance.get("/products/get-related-products", {
+          params: { title: productTitle, id: productId },
+        });
+        setRelatedProducts(products);
       } catch (error) {
         console.error("Error fetching related products:", error);
         setRelatedProducts([]); // Optionally set to an empty array in case of failure
       }
     }
-    if (productTitle && productKey) {
+    if (productTitle && productId) {
       getRelatedProducts();
     }
-  }, [productTitle, productKey]);
+  }, [productTitle, productId]);
   return (
     <div>
       <div className="pt-10">
@@ -34,15 +34,14 @@ export const RelatedProducts = ({ productTitle, productKey }) => {
         <div className="grid md:grid-cols-3 lg:grid-cols-4 justify-center">
           {relatedProducts.map((product) => {
             return (
-              <React.Fragment key={product.key}>
-                <Link to={`/product/${product.key}`}>
+              <React.Fragment key={product._id}>
+                <Link to={`/product/${product._id}`}>
                   <div className="p-2.5">
                     <ProductCard
                       title={product.title}
                       name={product.name}
                       price={product.price}
                       small_image_url={product.small_image_url}
-                      key={product.key}
                     />
                   </div>
                 </Link>

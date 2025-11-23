@@ -5,7 +5,7 @@ import { RelatedProducts } from "./RelatedProducts";
 export const ProductDetails = ({
   description,
   productName,
-  productKey,
+  productId,
   productTitle,
 }) => {
   const [descReviews, setDescReviews] = useState(true);
@@ -34,7 +34,7 @@ export const ProductDetails = ({
       {descReviews && <div className="py-5">{description}</div>}
       {!descReviews && <ReviewSection productName={productName} />}
       {productName && (
-        <RelatedProducts productTitle={productTitle} productKey={productKey} />
+        <RelatedProducts productTitle={productTitle} productId={productId}/>
       )}
     </div>
   );

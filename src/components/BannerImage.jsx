@@ -1,6 +1,6 @@
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
 
 function BannerImage() {
   return (
@@ -24,10 +24,14 @@ function BannerImage() {
                   ></img>
                 </div>
                 <div>
-                  <h2 className="text-xl font-merriweather py-2">Best Quality Products</h2>
+                  <h2 className="text-xl font-merriweather py-2">
+                    Best Quality Products
+                  </h2>
                 </div>
                 <div>
-                  <h1 className="text-4xl lg:text-6xl font-semibold ">Join The Organic Movement!</h1>
+                  <h1 className="text-4xl lg:text-6xl font-semibold ">
+                    Join The Organic Movement!
+                  </h1>
                 </div>
                 <div>
                   <p className="py-2 text-sm lg:text-xl text-[#333333]">
@@ -41,7 +45,7 @@ function BannerImage() {
                     icon={faCartShopping}
                     style={{ color: "#ffffff" }}
                   />
-                  <button className=" text-white font-medium w-40">
+                  <button className="text-white font-medium w-40">
                     SHOP NOW
                   </button>
                 </div>

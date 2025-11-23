@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
@@ -96,7 +96,7 @@ const CartPage = () => {
                                 <p className="md:hidden font-semibold">
                                   Price:
                                 </p>
-                                <p>£{item.price}</p>
+                                <p>₹{item.price}</p>
                               </div>
                             </td>
                             <td className="border-b border-slate-300">
@@ -121,7 +121,7 @@ const CartPage = () => {
                                 <p className="md:hidden font-semibold">
                                   Subtotal:
                                 </p>
-                                £{item.price * item.quantity}.00
+                                ₹{item.price * item.quantity}.00
                               </div>
                             </td>
                           </tr>
@@ -163,7 +163,7 @@ const CartPage = () => {
                           Subtotal
                         </th>
                         <td className="p-4 border-b border-slate-300">
-                          £{sum}.00
+                          ₹{sum}.00
                         </td>
                       </tr>
                       <tr>
@@ -171,7 +171,7 @@ const CartPage = () => {
                           Total
                         </th>
                         <td className="p-4 border-b border-slate-300">
-                          £{sum}.00
+                          ₹{sum}.00
                         </td>
                       </tr>
                     </tbody>

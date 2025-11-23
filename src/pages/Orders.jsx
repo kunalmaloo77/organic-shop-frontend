@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import Footer from "../components/Footer";
-import axios from "axios";
-import backendUrl from "../config";
 import { useNavigate } from "react-router-dom";
 import { Package, Calendar, CreditCard, Eye, Truck } from "lucide-react";
 import instance from "../utils/axios";
@@ -10,6 +8,7 @@ import instance from "../utils/axios";
 const Orders = () => {
   // Sample order data - in a real app, this would come from an API
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // State for order filter
@@ -51,14 +50,20 @@ const Orders = () => {
   useEffect(() => {
     async function fetchOrders() {
       try {
-        const res = await instance.get("/orders");
-        const formattedOrders = res.data.map((order) => {
+        const {
+          data: {
+            data: { orders },
+          },
+        } = await instance.get("/orders");
+        const formattedOrders = orders.map((order) => {
           const formattedOrderId = "#ORD-" + order._id.slice(-6).toUpperCase();
           return { ...order, formattedOrderId };
         });
         setOrders(formattedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
       }
     }
     fetchOrders();
@@ -91,8 +96,82 @@ const Orders = () => {
               </select>
             </div>
           </div>
+          {loading ? (
+            <div className="space-y-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-pulse">
+                {/* Header Section */}
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                    <div className="flex items-start gap-4">
+                      {/* Icon placeholder */}
+                      <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+                      <div>
+                        {/* Order ID */}
+                        <div className="h-6 bg-gray-200 rounded w-32 mb-2"></div>
+                        {/* Date */}
+                        <div className="h-4 bg-gray-200 rounded w-40"></div>
+                      </div>
+                    </div>
+                    {/* Status badge */}
+                    <div className="mt-4 sm:mt-0">
+                      <div className="h-8 bg-gray-200 rounded-lg w-24"></div>
+                    </div>
+                  </div>
 
-          {filteredOrders.length === 0 ? (
+                  {/* Order Items Section */}
+                  <div className="border-t border-gray-100 pt-6">
+                    {/* Section title */}
+                    <div className="h-6 bg-gray-200 rounded w-32 mb-4"></div>
+
+                    {/* Order items */}
+                    <div className="space-y-4">
+                      {[1, 2].map((j) => (
+                        <div
+                          key={j}
+                          className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
+                        >
+                          <div className="flex items-center gap-4">
+                            {/* Product image */}
+                            <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                            <div>
+                              {/* Product name */}
+                              <div className="h-5 bg-gray-200 rounded w-40 mb-2"></div>
+                              {/* Quantity */}
+                              <div className="h-4 bg-gray-200 rounded w-20"></div>
+                            </div>
+                          </div>
+                          <div className="text-right space-y-2">
+                            {/* Price */}
+                            <div className="h-6 bg-gray-200 rounded w-20"></div>
+                            {/* Unit price */}
+                            <div className="h-4 bg-gray-200 rounded w-16"></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Total section */}
+                    <div className="flex justify-between items-center pt-6 mt-6 border-t border-gray-100">
+                      <div className="h-6 bg-gray-200 rounded w-32"></div>
+                      <div className="h-8 bg-gray-200 rounded w-24"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Section */}
+                <div className="bg-gray-50 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  {/* Payment method */}
+                  <div className="h-5 bg-gray-200 rounded w-48"></div>
+
+                  {/* Buttons */}
+                  <div className="flex gap-3">
+                    <div className="h-10 bg-gray-200 rounded-lg w-32"></div>
+                    <div className="h-10 bg-gray-200 rounded-lg w-28"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : filteredOrders.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Package className="text-gray-400" size={32} />
@@ -104,7 +183,7 @@ const Orders = () => {
                 No orders match the selected filter criteria.
               </p>
             </div>
-          ) : (
+          ) : ( 
             <div className="space-y-6">
               {filteredOrders.map((order) => (
                 <div
@@ -152,10 +231,10 @@ const Orders = () => {
                             className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
                           >
                             <div className="flex items-center gap-4">
-                              {item.product.small_image_url ? (
+                              {item.productId.small_image_url ? (
                                 <img
-                                  src={item.product.small_image_url}
-                                  alt={item.product.name}
+                                  src={item.productId.small_image_url}
+                                  alt={item.productId.name}
                                   className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                                 />
                               ) : (
@@ -168,7 +247,7 @@ const Orders = () => {
                               )}
                               <div>
                                 <h4 className="font-medium text-gray-900">
-                                  {item.product.name}
+                                  {item.productId.name}
                                 </h4>
                                 <p className="text-sm text-gray-600">
                                   Quantity: {item.quantity}
@@ -178,12 +257,12 @@ const Orders = () => {
                             <div className="text-right">
                               <p className="text-lg font-semibold text-gray-900">
                                 $
-                                {(item.product.price * item.quantity).toFixed(
+                                {(item.productId.price * item.quantity).toFixed(
                                   2
                                 )}
                               </p>
                               <p className="text-sm text-gray-600">
-                                ${item.product.price.toFixed(2)} each
+                                ${item.productId.price.toFixed(2)} each
                               </p>
                             </div>
                           </div>
@@ -195,7 +274,7 @@ const Orders = () => {
                           Total Amount
                         </span>
                         <span className="text-2xl font-bold text-nature-green">
-                          ${order.amount.toFixed(2)}
+                          ₹ {order.amount.toFixed(2)}
                         </span>
                       </div>
                     </div>

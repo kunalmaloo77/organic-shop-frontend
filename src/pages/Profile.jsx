@@ -9,7 +9,7 @@ import {
   Bell,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import Footer from "../components/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/authSlice";
@@ -153,8 +153,6 @@ const ProfilePage = () => {
                 </div>
                 <ChevronRight className="text-gray-400 group-hover:text-gray-600 transition-colors" />
               </button>
-
-              {/* Logout - Now properly sized and styled */}
               <button
                 className="w-full p-6 flex items-center text-red-600 hover:bg-red-50 cursor-pointer transition-colors group border-t border-gray-100"
                 onClick={() => dispatch(logoutUser())}

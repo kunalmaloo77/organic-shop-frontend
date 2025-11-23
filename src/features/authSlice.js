@@ -1,6 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import backendUrl from "../config";
-import axios from "axios";
 import { getAuth } from "../utils/authUtils.js";
 import instance from "../utils/axios.js";
 
@@ -8,19 +6,46 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ loginEmail, loginPassword }, { rejectWithValue }) => {
     try {
-      const res = await instance.post(
+      const {
+        data: {
+          data: { accessToken, user },
+        },
+      } = await instance.post(
         "/auth/login",
         { loginEmail, loginPassword },
         { withCredentials: true }
       );
-      const accessToken = res.data.accessToken;
+      localStorage.setItem("auth", JSON.stringify(user));
       sessionStorage.setItem("access_token", accessToken);
-      localStorage.setItem("auth", JSON.stringify(res.data.user));
-      console.log(res.data.user, "res data user");
-      return res.data.user;
+      return user;
     } catch (error) {
       return rejectWithValue(
         error.response?.data || { message: "Login failed" }
+      );
+    }
+  }
+);
+
+export const loginAdmin = createAsyncThunk(
+  "auth/admin-login",
+  async ({ loginEmail, loginPassword }, { rejectWithValue }) => {
+    try {
+      const {
+        data: {
+          data: { accessToken, user },
+        },
+      } = await instance.post(
+        "/admin/login",
+        { loginEmail, loginPassword },
+        { withCredentials: true }
+      );
+      console.log("Admin login response:", user, accessToken);
+      sessionStorage.setItem("access_token", accessToken);
+      localStorage.setItem("auth", JSON.stringify(user));
+      return user;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: "Admin Login failed" }
       );
     }
   }
@@ -46,14 +71,18 @@ export const signupUser = createAsyncThunk(
   "auth/signup",
   async ({ name, email, password, confirm_password }, { rejectWithValue }) => {
     try {
-      const res = await instance.post(
-        "/users",
+      const {
+        data: {
+          data: { user, accessToken },
+        },
+      } = await instance.post(
+        "/auth/signup",
         { name, email, password, confirm_password },
         { withCredentials: true }
       );
-      localStorage.setItem("auth", JSON.stringify(res.data.user));
-      sessionStorage.setItem("access_token", res.data.user.accessToken);
-      return res.data.user;
+      localStorage.setItem("auth", JSON.stringify(user));
+      sessionStorage.setItem("access_token", accessToken);
+      return user;
     } catch (error) {
       return rejectWithValue(
         error.response?.data || { message: "Signup failed" }
@@ -75,8 +104,27 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    // as provider verifies user so we set it directly
+    setUserDirectly: (state, action) => {
+      state.user = action.payload;
+    },
   },
   extraReducers: (builder) => {
+    // Admin login
+    builder.addCase(loginAdmin.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(loginAdmin.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
+      state.user = action.payload;
+    });
+    builder.addCase(loginAdmin.rejected, (state, action) => {
+      state.user = null;
+      state.loading = false;
+      state.error = action.payload?.message || "Admin Login Failed";
+    });
     // Login
     builder.addCase(loginUser.pending, (state) => {
       state.loading = true;

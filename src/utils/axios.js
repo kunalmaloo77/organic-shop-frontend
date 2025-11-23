@@ -25,19 +25,26 @@ instance.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
+      ["INVALID_TOKEN", "NO_TOKEN"].includes(
+        error.response?.data?.errors?.[0]?.code
+      ) &&
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
       try {
-        const res = await axios.post(
+        const {
+          data: {
+            data: { accessToken },
+          },
+        } = await axios.post(
           `${backendUrl}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
-        const newAccessToken = res.data.accessToken;
-        if (newAccessToken) {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          sessionStorage.setItem("access_token", newAccessToken);
+
+        if (accessToken) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          sessionStorage.setItem("access_token", accessToken);
         }
         return instance(originalRequest);
       } catch (refreshError) {

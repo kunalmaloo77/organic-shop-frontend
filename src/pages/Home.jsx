@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header.jsx";
+import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import CardHome from "../components/CardHome.jsx";
 import BannerImage from "../components/BannerImage.jsx";
 import ProductsPreview from "../components/ProductsPreview.jsx";
 import FoodPreview from "../components/FoodPreview.jsx";
 import CustomerReview from "../components/CustomerReview.jsx";
-import axios from "axios";
-import backendUrl from "../config.js";
 import instance from "../utils/axios.js";
 
 const Home = () => {
@@ -15,7 +13,9 @@ const Home = () => {
   useEffect(() => {
     async function getProducts() {
       try {
-        const { data } = await instance.get("/products");
+        const {
+          data: { data },
+        } = await instance.get("/products");
         if (data) {
           setProducts(data);
         }

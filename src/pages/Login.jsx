@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import Footer from "../components/Footer";
 import { useFormik } from "formik";
 import { loginSchema, signUpSchema } from "../schemas";
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
 import { loginUser, signupUser } from "../features/authSlice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import backendUrl from "../config";
 
 function AuthErrorMessage({ message }) {
   if (!message) return null;
@@ -93,27 +94,44 @@ function LoginForm({ formik, loading, message, toggleAuthView }) {
           touched={formik.touched.loginPassword}
           label="Password"
         />
-        <div className="flex items-center justify-center">
+        <div className="flex flex-col gap-2 items-center justify-center">
           <AuthButton loading={loading}>Login</AuthButton>
+          <div className="w-full">
+            <a
+              href={`${backendUrl}/auth/login/federated/google`}
+              className="flex w-full justify-center gap-3 border border-gray-300 px-5 py-2 rounded-md shadow-sm hover:bg-gray-100 transition"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              <span className="text-sm text-gray-700 font-medium">
+                Sign in with Google
+              </span>
+            </a>
+          </div>
         </div>
       </form>
-      <p className="text-center text-sm text-gray-600">
-        Don't have an account?{" "}
-        <button
-          className="text-[#6a9739] font-semibold hover:underline"
-          onClick={toggleAuthView}
-        >
-          Sign up here
+      <div className="flex flex-col items-center">
+        <p className="text-sm text-gray-600">
+          Don't have an account?{" "}
+          <button
+            className="text-[#6a9739] font-semibold hover:underline"
+            onClick={toggleAuthView}
+          >
+            Sign up here
+          </button>
+        </p>
+        <button>
+          <Link
+            to="/forgot-password"
+            className="text-sm text-gray-600 hover:underline"
+          >
+            Forgot Password?
+          </Link>
         </button>
-      </p>
-      <button>
-        <Link
-          to="/forgot-password"
-          className="text-sm text-gray-600 hover:underline"
-        >
-          Forgot Password?
-        </Link>
-      </button>
+      </div>
     </>
   );
 }
@@ -172,8 +190,23 @@ function SignupForm({ formik, loading, message, toggleAuthView }) {
           touched={formik.touched.confirm_password}
           label="Confirm Password"
         />
-        <div className="flex items-center justify-center">
+        <div className="flex flex-col gap-2 items-center justify-center">
           <AuthButton loading={loading}>Sign Up</AuthButton>
+          <div className="w-full">
+            <a
+              href={`${backendUrl}/auth/login/federated/google`}
+              className="flex w-full justify-center gap-3 border border-gray-300 px-5 py-2 rounded-md shadow-sm hover:bg-gray-100 transition"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              <span className="text-sm text-gray-700 font-medium">
+                Sign up with Google
+              </span>
+            </a>
+          </div>
         </div>
       </form>
       <p className="text-center mt-4 text-sm text-gray-600">
@@ -192,22 +225,47 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const fromState = location.state?.from?.pathname;
   const { user, loading, error } = useSelector((state) => state.auth);
   const [message, setMessage] = useState("");
   const [isLoginView, setIsLoginView] = useState(true);
 
   useEffect(() => {
     if (user) {
-      navigate(from, { replace: true });
+      let target = "/";
+      try {
+        const stored = localStorage.getItem("post_login_redirect");
+        target = fromState || stored || "/";
+        if (stored) localStorage.removeItem("post_login_redirect");
+      } catch (e) {
+        // fall back silently
+        target = fromState || "/";
+      }
+      navigate(target, { replace: true });
     }
-  }, [user, from, navigate]);
+  }, [user, fromState, navigate]);
 
   useEffect(() => {
     if (error) {
       setMessage(error);
     }
   }, [error]);
+
+  useEffect(() => {
+    /* Wait for Google script to load */
+    if (window.google) {
+      window.google.accounts.id.renderButton(
+        document.getElementById("googleSignInDiv"),
+        {
+          theme: "outline",
+          size: "large",
+          shape: "rectangular",
+          text: "signin_with",
+          logo_alignment: "left",
+        }
+      );
+    }
+  }, []);
 
   const formik_login = useFormik({
     initialValues: {
@@ -257,9 +315,9 @@ const Login = () => {
           <Loader2 className="animate-spin size-6 text-muted-foreground" />
         </div>
       ) : (
-        <div className="bg-content-background">
-          <div className="flex flex-col justify-center items-center py-16">
-            <div className="w-full max-w-md p-8 shadow-md rounded-lg bg-white">
+        <div className="h-[calc(100vh_-_85px)] bg-content-background flex flex-col justify-center">
+          <div className="flex flex-col justify-center items-center px-4">
+            <div className="w-full max-w-md p-6 shadow-md rounded-lg bg-white">
               {isLoginView ? (
                 <LoginForm
                   formik={formik_login}
@@ -279,7 +337,6 @@ const Login = () => {
           </div>
         </div>
       )}
-      <Footer />
     </>
   );
 };

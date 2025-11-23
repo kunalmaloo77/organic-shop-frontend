@@ -1,9 +1,9 @@
-import { LoaderCircle } from "lucide-react";
 import React from "react";
+import { LoaderCircle } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-const ProtectedRouteLayout = () => {
+const AdminRoutesLayout = () => {
   const { user, loading } = useSelector((state) => state.auth);
   const location = useLocation();
 
@@ -15,20 +15,11 @@ const ProtectedRouteLayout = () => {
     );
   }
 
-  if (!user) {
-    try {
-      // Persist intended route for post-auth redirect
-      localStorage.setItem(
-        "post_login_redirect",
-        location.pathname + location.search
-      );
-    } catch (e) {
-      // Ignore storage errors silently
-    }
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!user || user.role !== "admin") {
+    return <Navigate to="/admin/login" state={{ from: location }} replace />;
   }
 
   return <Outlet />;
 };
 
-export default ProtectedRouteLayout;
+export default AdminRoutesLayout;

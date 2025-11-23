@@ -1,76 +1,97 @@
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { filterAction } from "../features/filterProductsSlice";
+import { Link, useSearchParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { productAction, startLoading } from "../features/productsSlice";
+import { setTotalPages } from "../features/paginationSlice";
 import { Range, getTrackBackground } from "react-range";
+import { ProductCardSkeleton } from "./ProductsContainer";
+import useDebounce from "../hooks/useDebounce";
+import instance from "../utils/axios";
 
-const Filter = ({ sideProducts, products }) => {
-  const dispatch = useDispatch();
-  let inputValue = "";
-  const STEP = 1;
+const Filter = ({ category }) => {
+  const STEP = 50;
   const MIN = 0;
-  const MAX = 40;
-  const [filterProducts, setFilterProducts] = useState([]);
-  const [values, setValues] = useState([MIN, MAX]);
+  const MAX = 1000;
+  const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  function handleSearch(e) {
-    inputValue = e.target.value.toLowerCase();
-    const filter = products.filter((product) => {
-      return product.name.toLowerCase().includes(inputValue);
-    });
-    setFilterProducts(filter);
-  }
-  function handlePriceFilter(values) {
-    setValues(values);
-    const priceFilter = products.filter(
-      (product) => product.price >= values[0] && product.price <= values[1]
-    );
-    setFilterProducts(priceFilter);
-    dispatch(filterAction(priceFilter));
+  const loading = useSelector((state) => state.products.loading);
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [values, setValues] = useState([
+    parseInt(searchParams.get("min_price")) || MIN,
+    parseInt(searchParams.get("max_price")) || MAX,
+  ]);
+  const [minPrice, setMinPrice] = useState(
+    parseInt(searchParams.get("min_price")) || MIN
+  );
+  const [maxPrice, setMaxPrice] = useState(
+    parseInt(searchParams.get("max_price")) || MAX
+  );
+  const [sideProducts, setSideProducts] = useState([]);
+
+  const debounceSearch = useDebounce(search);
+  const page = searchParams.get("page") || 1;
+
+  useEffect(() => {
+    fetchProducts();
+  }, [debounceSearch, page, minPrice, maxPrice, category]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    params.set("min_price", minPrice.toString());
+    params.set("max_price", maxPrice.toString());
+    setSearchParams(params);
+  }, [minPrice, maxPrice]);
+
+  async function fetchProducts() {
+    try {
+      dispatch(startLoading());
+      const { data } = await instance.get(
+        `/products?search=${debounceSearch}&page=${page}&min_price=${minPrice}&max_price=${maxPrice}&category=${category}`
+      );
+      const allProducts = await data.data.products;
+      const totalPages = data.data.totalPages;
+
+      if (allProducts.length > 0) {
+        setSideProducts(allProducts.slice(0, 3));
+      }
+      dispatch(productAction(allProducts));
+      dispatch(setTotalPages(totalPages));
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      dispatch(productAction([]));
+    }
   }
 
-  function handleClick(e) {
+  const handleSubmitPriceFilter = (e) => {
     e.preventDefault();
-    dispatch(filterAction(filterProducts));
-  }
+    setMinPrice(values[0]);
+    setMaxPrice(values[1]);
+  };
 
   return (
-    <div className="mt-16 px-4 lg:pr-[3.75rem] lg:border-r-2 lg:border-gray-300">
+    <div className="lg:mt-16 px-4 lg:px-6 lg:border-r-2 lg:border-gray-300">
+      <form className="mb-8">
+        <label htmlFor="searchName"></label>
+        <input
+          type="search"
+          id="searchName"
+          name="searchName"
+          placeholder="Search products..."
+          onChange={(e) => setSearch(e.target.value)}
+          className="px-[0.5rem] py-[0.375rem] border-[1px] border-slate-300 w-full"
+        />
+      </form>
+
       <div className="mb-10">
-        <form onSubmit={handleClick}>
-          <div className="flex">
-            <label htmlFor="searchName"></label>
-            <input
-              type="search"
-              id="searchName"
-              name="searchName"
-              placeholder="Search products..."
-              onChange={handleSearch}
-              className="px-[0.5rem] py-[0.375rem] border-[1px] border-slate-300 w-full lg:w-auto"
-            />
-            <button
-              type="submit"
-              className="bg-[#6a9739] text-xl ml-2 rounded-sm px-2 py-2"
-            >
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                style={{ color: "#ffffff" }}
-              />
-            </button>
-          </div>
-        </form>
-      </div>
-      <div className="mb-10">
-        <h3 className="text-2xl mb-10 font-merriweather">Filter by price</h3>
-        <div className="flex flex-col items-center">
+        <h3 className="text-2xl mb-4 font-merriweather">Filter by price</h3>
+        <div className="flex flex-col">
           <Range
             values={values}
             step={STEP}
             min={MIN}
             max={MAX}
-            onChange={(values) => handlePriceFilter(values)}
+            onChange={(values) => setValues(values)}
             renderTrack={({ props, children }) => (
               <div
                 onMouseDown={props.onMouseDown}
@@ -101,7 +122,7 @@ const Filter = ({ sideProducts, products }) => {
                 </div>
               </div>
             )}
-            renderThumb={({ props, isDragged }) => (
+            renderThumb={({ props }) => (
               <div
                 {...props}
                 style={{
@@ -121,6 +142,12 @@ const Filter = ({ sideProducts, products }) => {
             <div className="p-3 bg-white">{values[0]}</div>
             <div className="p-3 bg-white">{values[1]}</div>
           </div>
+          <button
+            onClick={handleSubmitPriceFilter}
+            className="mt-4 px-2 py-2 border-2 rounded hover:bg-nature-green hover:text-white"
+          >
+            Go
+          </button>
         </div>
       </div>
       <div className="flex flex-col">
@@ -134,25 +161,34 @@ const Filter = ({ sideProducts, products }) => {
         </ul>
       </div>
       <div>
-        {sideProducts.map((product) => {
-          return (
-            <React.Fragment key={product.key}>
-              <div className="flex flex-col">
-                <a href="/">
-                  <img
-                    src={product.small_image_url}
-                    alt={`${product.image}`}
-                    className="h-60 w-60 mb-2"
-                  />
-                  <h1 className="text-[#8bc34a] cursor-pointer">
-                    {product.name}
-                  </h1>
-                  <p className="mb-4 font-light">£{product.price}</p>
-                </a>
-              </div>
-            </React.Fragment>
-          );
-        })}
+        {loading &&
+          Array.from({ length: 2 }).map((_, i) => (
+            <div className="flex flex-col mb-4">
+              <ProductCardSkeleton key={i} />
+            </div>
+          ))}
+
+        {!loading &&
+          sideProducts.length > 0 &&
+          sideProducts.map((product) => {
+            return (
+              <React.Fragment key={product.key}>
+                <div className="flex flex-col">
+                  <a href="/">
+                    <img
+                      src={product.small_image_url}
+                      alt={`${product.image}`}
+                      className="h-60 w-60 mb-2"
+                    />
+                    <h1 className="text-[#8bc34a] cursor-pointer">
+                      {product.name}
+                    </h1>
+                    <p className="mb-4 font-light">₹{product.price}</p>
+                  </a>
+                </div>
+              </React.Fragment>
+            );
+          })}
       </div>
     </div>
   );

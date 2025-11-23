@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Slideshow from "../components/SlideShow/Slideshow";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +6,7 @@ import {
   faCartShopping,
   faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import Header from "../components/Header/Header";
 
 const About = () => {
   const [count1, setCount1] = useState(4800);

@@ -110,7 +110,7 @@ const Cart = () => {
                       <div className="m-10">
                         <h1>{item.name}</h1>
                         <p>
-                          £{item.price} x {item.quantity}
+                          ₹{item.price} x {item.quantity}
                         </p>
                       </div>
                     </div>
@@ -134,7 +134,7 @@ const Cart = () => {
           <div className="flex flex-col fixed w-full md:w-[35rem] h-[14rem] bottom-0 bg-content-background">
             <div className="flex justify-between p-4 border-y-2">
               <p>Subtotal:</p>
-              <p>£{sum}.00</p>
+              <p>₹{sum}.00</p>
             </div>
             <div
               className="p-4"

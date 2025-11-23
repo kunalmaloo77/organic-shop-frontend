@@ -5,9 +5,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import FormCheckout from "../components/FormCheckout";
-import backendUrl from "../config";
 import { emptyCartAction } from "../features/addtocartSlice";
 import instance from "../utils/axios";
 
@@ -85,14 +84,11 @@ const Checkout = () => {
 
     try {
       const items = cartItems.map((item) => ({
-        product: item._id,
+        productId: item._id,
         quantity: item.quantity,
-        price: item.price,
-        name: item.name,
       }));
 
       const orderData = {
-        amount: sum,
         currency: "INR",
         items,
         paymentMethod: selectedOption,
@@ -100,12 +96,15 @@ const Checkout = () => {
       };
 
       // Create the order first, regardless of payment method
-      const response = await instance.post("/orders", orderData);
+      const {
+        status,
+        data: { data },
+      } = await instance.post("/orders", orderData);
 
-      if (response.status === 201) {
+      if (status === 201) {
         // Redirect to order review page
         dispatch(emptyCartAction());
-        navigate(`/order-review/${response.data.order._id}`);
+        navigate(`/order-review/${data.order._id}`);
       } else {
         alert("Failed to create order. Please try again.");
       }
@@ -197,16 +196,16 @@ const Checkout = () => {
                     <p>
                       {item.name} x {item.quantity}
                     </p>
-                    <p>£{item.price * item.quantity}.00</p>
+                    <p>₹{item.price * item.quantity}.00</p>
                   </div>
                 ))}
                 <div className="flex justify-between py-4 border-b-2">
                   <p>Subtotal</p>
-                  <p>£{sum}.00</p>
+                  <p>₹{sum}.00</p>
                 </div>
                 <div className="flex justify-between py-4 border-b-2">
                   <p>Total</p>
-                  <p className="font-bold text-lg">£{sum}.00</p>
+                  <p className="font-bold text-lg">₹{sum}.00</p>
                 </div>
                 <div>
                   <h3 className="font-bold mt-6 mb-2">Payment Method</h3>

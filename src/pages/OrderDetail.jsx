@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import Footer from "../components/Footer";
 import instance from "../utils/axios";
+import { formatDate } from "../utils/utils";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
@@ -16,19 +17,17 @@ const OrderDetail = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      const response = await instance.get(`/orders/${orderId}`);
-      setOrder(response.data);
+      const {
+        data: {
+          data: { order },
+        },
+      } = await instance.get(`/orders/${orderId}`);
+      setOrder(order);
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch order details:", error);
       setLoading(false);
     }
-  };
-
-  // Format date to readable string
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   const loadScript = (src) => {
@@ -169,7 +168,7 @@ const OrderDetail = () => {
             </div>
             <div className="border p-4">
               <p className="text-sm text-gray-600">Total:</p>
-              <p className="font-bold">£{order.amount}.00</p>
+              <p className="font-bold">₹{order.amount}.00</p>
             </div>
             <div className="border p-4">
               <p className="text-sm text-gray-600">Payment Method:</p>
@@ -211,14 +210,14 @@ const OrderDetail = () => {
                   {order.items.map((item, index) => (
                     <tr key={index}>
                       <td className="py-3 px-4 border-b">
-                        {item.product.name || `Product #${item.product._id}`}
+                        {item.productId.name || `Product #${item.product._id}`}
                       </td>
                       <td className="py-3 px-4 border-b">{item.quantity}</td>
                       <td className="py-3 px-4 text-right border-b">
-                        £{item.product.price}.00
+                        ₹{item.productId.price}.00
                       </td>
                       <td className="py-3 px-4 text-right border-b">
-                        £{item.product.price * item.quantity}.00
+                        ₹{item.productId.price * item.quantity}.00
                       </td>
                     </tr>
                   ))}
@@ -230,7 +229,7 @@ const OrderDetail = () => {
                       Subtotal:
                     </td>
                     <td className="py-3 px-4 text-right border-b">
-                      £{order.amount}.00
+                      ₹{order.amount}.00
                     </td>
                   </tr>
                   <tr className="bg-gray-50">
@@ -241,7 +240,7 @@ const OrderDetail = () => {
                       Total:
                     </td>
                     <td className="py-3 px-4 text-right border-b font-bold">
-                      £{order.amount}.00
+                      ₹{order.amount}.00
                     </td>
                   </tr>
                 </tbody>
@@ -305,7 +304,7 @@ const OrderDetail = () => {
                 <div className="border p-4 bg-blue-50">
                   <p>Your order will be delivered within 3-5 business days.</p>
                   <p className="mt-2">
-                    Please have the exact amount (£{order.amount}.00) ready for
+                    Please have the exact amount (₹{order.amount}.00) ready for
                     the delivery person.
                   </p>
                 </div>

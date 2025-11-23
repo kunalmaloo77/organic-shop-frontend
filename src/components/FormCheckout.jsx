@@ -16,7 +16,6 @@ const FormCheckout = ({ formData, setFormData }) => {
             city: data.District,
             state: data.State,
           }));
-          console.log("response from postal code api ->", res);
         }
       } catch (error) {
         console.log("error fetching postal code->", error);

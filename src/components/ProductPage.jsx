@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
 import { useParams } from "react-router-dom";
 import Footer from "./Footer";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,12 +8,11 @@ import {
   updateItemQuantity,
 } from "../features/addtocartSlice";
 import { ProductDetails } from "./productDetails";
-import axios from "axios";
-import backendUrl from "../config";
 import { LoaderCircle } from "lucide-react";
 import { startLoading, stopLoading } from "../features/loadingSlice";
 import ProgressiveImage from "./ProgressiveImage";
 import instance from "../utils/axios";
+import Header from "./Header/Header";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -28,8 +26,10 @@ const ProductPage = () => {
     async function getProduct() {
       dispatch(startLoading());
       try {
-        const res = await instance.get(`/products/${id}`);
-        setProduct(res.data);
+        const {
+          data: { data },
+        } = await instance.get(`/products/${id}`);
+        setProduct(data);
       } catch (error) {
         console.error(error);
       }
@@ -92,7 +92,18 @@ const ProductPage = () => {
                 </h1>
                 <div className="mb-3">
                   <h2 className="font-merriweather font-bold text-2xl inline">
-                    £{product.price}
+                    {product.sale && product.sale_price ? (
+                      <span className="flex items-center gap-3">
+                        <span className="text-gray-500 line-through text-2xl">
+                          ₹{product.price}
+                        </span>
+                        <span className="text-2xl text-gray-900 font-semibold">
+                          ₹{product.sale_price}
+                        </span>
+                      </span>
+                    ) : (
+                      <span>₹{product.price}</span>
+                    )}
                   </h2>
                   <h3 className="inline"> + Free Shipping</h3>
                 </div>
@@ -101,10 +112,10 @@ const ProductPage = () => {
 
                 <form onSubmit={handleAddToCart}>
                   <div className="mb-5 md:inline">
-                    <label htmlFor={`quantity_${product.key}`}></label>
+                    <label htmlFor={`quantity_${product._id}`}></label>
                     <input
                       type="number"
-                      id={`quantity_${product.key}`}
+                      id={`quantity_${product._id}`}
                       name="quantity"
                       autoComplete="off"
                       className="w-14 p-2 mr-12"
@@ -128,7 +139,7 @@ const ProductPage = () => {
         <ProductDetails
           description={product.description}
           productName={product.name}
-          productKey={product.key}
+          productId={product._id}
           productTitle={product.title}
         />
       </div>

@@ -11,7 +11,7 @@ module.exports = {
       },
     },
     fontFamily: {
-      'merriweather': ['Merriweather', 'serif'],
+      merriweather: ["Merriweather", "serif"],
     },
   },
   plugins: [],

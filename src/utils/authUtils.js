@@ -26,8 +26,5 @@ export const sendRefreshToken = async () => {
 
 export const getAuth = () => {
   const storedUser = localStorage.getItem("auth");
-  if (storedUser !== null) {
-    return JSON.parse(storedUser);
-  }
-  return null;
+  return storedUser ? JSON.parse(storedUser) : null;
 };
