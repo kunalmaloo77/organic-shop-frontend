@@ -71,7 +71,7 @@ const AdminProductsList = () => {
             <button
               className="bg-nature-green hover:bg-secondary-nature text-white px-4 py-2 font-medium transition-colors flex items-center gap-2 w-fit"
               onClick={() => {
-                navigate("/admin/create-product");
+                navigate("/admin/products/create");
               }}
             >
               <Plus className="w-5 h-5" />
