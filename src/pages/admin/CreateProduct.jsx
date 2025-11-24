@@ -16,7 +16,7 @@ const CreateProduct = () => {
   const formik = useFormik({
     initialValues: {
       key: "",
-      title: "Grocery",
+      title: "grocery",
       name: "",
       price: "",
       sale: false,
