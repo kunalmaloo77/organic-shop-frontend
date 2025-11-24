@@ -146,8 +146,8 @@ const CreateProduct = () => {
                   onBlur={formik.handleBlur}
                   value={formik.values.title}
                 >
-                  <option value="Grocery">Grocery</option>
-                  <option value="Juice">Juice</option>
+                  <option value="grocery">Grocery</option>
+                  <option value="juice">Juice</option>
                 </select>
                 {formik.touched.title && formik.errors.title && (
                   <p className="mt-1 text-sm text-red-500">
