@@ -24,19 +24,21 @@ const ProductPage = () => {
 
   useEffect(() => {
     async function getProduct() {
-      dispatch(startLoading());
       try {
+        setProduct(null);
+        dispatch(startLoading());
         const {
           data: { data },
         } = await instance.get(`/products/${id}`);
         setProduct(data);
       } catch (error) {
         console.error(error);
+      } finally {
+        dispatch(stopLoading());
       }
-      dispatch(stopLoading());
     }
     getProduct();
-  }, [id, dispatch]);
+  }, [id]);
 
   if (isLoading) {
     return (
@@ -136,12 +138,15 @@ const ProductPage = () => {
             </div>
           </div>
         </div>
-        <ProductDetails
-          description={product.description}
-          productName={product.name}
-          productId={product._id}
-          productTitle={product.title}
-        />
+        {product && (
+          <ProductDetails
+            key={product._id}
+            description={product.description}
+            productName={product.name}
+            productId={product._id}
+            productTitle={product.title}
+          />
+        )}
       </div>
       <Footer />
     </>

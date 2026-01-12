@@ -34,7 +34,7 @@ const AdminProductsList = () => {
   }
 
   const handleEdit = (product) => {
-    navigate("/admin/edit-product/" + product._id);
+    navigate("/admin/products/edit/" + product._id);
   };
 
   const handleDelete = async (productId) => {
