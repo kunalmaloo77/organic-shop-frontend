@@ -86,8 +86,6 @@ const OrderDetail = () => {
             razorpay_signature: response.razorpay_signature,
           });
 
-          console.log(verificationRes);
-
           if (verificationRes.status === 200) {
             window.location.href = "/orders";
           } else {
