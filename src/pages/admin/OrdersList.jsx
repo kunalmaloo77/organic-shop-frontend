@@ -134,37 +134,37 @@ const OrdersList = () => {
 
   const getStatusConfig = (status) => {
     const configs = {
-      pending: {
+      PAYMENT_PENDING: {
         bg: "bg-yellow-100",
         text: "text-yellow-800",
         icon: Clock,
         label: "Pending",
       },
-      failed: {
+      PAYMENT_FAILED: {
         bg: "bg-red-100",
         text: "text-red-800",
         icon: XCircle,
         label: "Failed",
       },
-      created: {
+      CREATED: {
         bg: "bg-blue-100",
         text: "text-blue-800",
         icon: Package,
         label: "Created",
       },
-      paid: {
+      PAYMENT_SUCCESS: {
         bg: "bg-purple-100",
         text: "text-purple-800",
         icon: Package,
         label: "Paid",
       },
-      delivered: {
+      DELIVERED: {
         bg: "bg-green-100",
         text: "text-green-800",
         icon: CheckCircle,
         label: "Delivered",
       },
-      cancelled: {
+      CANCELLED: {
         bg: "bg-red-100",
         text: "text-red-800",
         icon: XCircle,

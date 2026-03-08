@@ -14,41 +14,53 @@ const Filter = ({ category }) => {
   const MAX = 1000;
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
+  const min_price = searchParams.get("min_price");
+  const max_price = searchParams.get("max_price");
+  const page = searchParams.get("page");
 
   const loading = useSelector((state) => state.products.loading);
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [values, setValues] = useState([
-    parseInt(searchParams.get("min_price")) || MIN,
-    parseInt(searchParams.get("max_price")) || MAX,
+    parseInt(min_price) || MIN,
+    parseInt(max_price) || MAX,
   ]);
-  const [minPrice, setMinPrice] = useState(
-    parseInt(searchParams.get("min_price")) || MIN
-  );
-  const [maxPrice, setMaxPrice] = useState(
-    parseInt(searchParams.get("max_price")) || MAX
+  const [minPrice, setMinPrice] = useState(parseInt(min_price) || MIN);
+  const [maxPrice, setMaxPrice] = useState(parseInt(max_price) || MAX);
+  const [hasPriceFilter, setHasPriceFilter] = useState(
+    Boolean(min_price || max_price),
   );
   const [sideProducts, setSideProducts] = useState([]);
 
   const debounceSearch = useDebounce(search);
-  const page = searchParams.get("page") || 1;
 
   useEffect(() => {
     fetchProducts();
-  }, [debounceSearch, page, minPrice, maxPrice, category]);
+  }, [debounceSearch, page, minPrice, maxPrice, category, hasPriceFilter]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
-    params.set("min_price", minPrice.toString());
-    params.set("max_price", maxPrice.toString());
+
+    if (hasPriceFilter) {
+      params.set("min_price", minPrice.toString());
+      params.set("max_price", maxPrice.toString());
+    } else {
+      params.delete("min_price");
+      params.delete("max_price");
+    }
+
     setSearchParams(params);
-  }, [minPrice, maxPrice]);
+  }, [minPrice, maxPrice, hasPriceFilter]);
 
   async function fetchProducts() {
     try {
       dispatch(startLoading());
-      const { data } = await instance.get(
-        `/products?search=${debounceSearch}&page=${page}&min_price=${minPrice}&max_price=${maxPrice}&category=${category}`
-      );
+      const baseUrl =
+        `/products?search=${debounceSearch}` +
+        (page ? `&page=${page}` : "") +
+        (hasPriceFilter ? `&min_price=${minPrice}&max_price=${maxPrice}` : "") +
+        (category !== "shop" ? `&category=${category}` : "");
+
+      const { data } = await instance.get(baseUrl);
       const allProducts = await data.data.products;
       const totalPages = data.data.totalPages;
 
@@ -65,6 +77,13 @@ const Filter = ({ category }) => {
 
   const handleSubmitPriceFilter = (e) => {
     e.preventDefault();
+
+    const urlHasPriceParams = Boolean(
+      searchParams.get("min_price") || searchParams.get("max_price"),
+    );
+    const isDefaultRange = values[0] === MIN && values[1] === MAX;
+
+    setHasPriceFilter(urlHasPriceParams || !isDefaultRange);
     setMinPrice(values[0]);
     setMaxPrice(values[1]);
   };

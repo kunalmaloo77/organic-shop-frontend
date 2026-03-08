@@ -25,13 +25,11 @@ import AdminProductList from "./pages/admin/AdminProductsList";
 import CreateProduct from "./pages/admin/CreateProduct";
 import EditProduct from "./pages/admin/EditProduct";
 import OrdersList from "./pages/admin/OrdersList";
-import { getAuth } from "./utils/authUtils";
 import ForgotPassword from "./pages/ForgotPassword";
 import SuccessfullLogin from "./pages/SuccessfulLogin";
 import ResetPasswordPage from "./pages/ResetPassword";
 
 export default function App() {
-  const role = getAuth()?.role;
   return (
     <div className="min-h-screen">
       <Cart />
@@ -40,49 +38,32 @@ export default function App() {
       <ToastContainer autoClose={1250} position="top-right" />
       <ScrollToTop />
       <Routes>
-        {role === "admin" ? (
-          <>
-            <Route element={<AdminRoutesLayout />}>
-              <Route path="/admin/dashboard" element={<Dashboard />} />
-              <Route path="/admin/products" element={<AdminProductList />} />
-              <Route
-                path="/admin/products/create"
-                element={<CreateProduct />}
-              />
-              <Route
-                path="/admin/products/edit/:id"
-                element={<EditProduct />}
-              />
-              <Route path="/admin/orders" element={<OrdersList />} />
-            </Route>
-          </>
-        ) : (
-          <>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/auth/success" element={<SuccessfullLogin />} />
-            <Route path="/product/:id" element={<ProductPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/shop" element={<ProductsList />} />
-            <Route
-              path="/product-category/:category"
-              element={<ProductsList />}
-            />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route
-              path="/reset-password/:token"
-              element={<ResetPasswordPage />}
-            />
-            <Route element={<ProtectedRouteLayout />}>
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/order-review/:orderId" element={<OrderDetail />} />
-            </Route>
-          </>
-        )}
+        <Route element={<AdminRoutesLayout />}>
+          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/products" element={<AdminProductList />} />
+          <Route path="/admin/products/create" element={<CreateProduct />} />
+          <Route path="/admin/products/edit/:id" element={<EditProduct />} />
+          <Route path="/admin/orders" element={<OrdersList />} />
+        </Route>
+
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/auth/success" element={<SuccessfullLogin />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/shop" element={<ProductsList />} />
+        <Route path="/product-category/:category" element={<ProductsList />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route element={<ProtectedRouteLayout />}>
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/order-review/:orderId" element={<OrderDetail />} />
+        </Route>
+
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>

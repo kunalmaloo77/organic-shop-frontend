@@ -16,8 +16,8 @@ const Home = () => {
         const {
           data: { data },
         } = await instance.get("/products");
-        if (data) {
-          setProducts(data);
+        if (data && data.products) {
+          setProducts(data.products);
         }
       } catch (error) {
         console.error(error);

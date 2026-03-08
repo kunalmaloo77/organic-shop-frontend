@@ -50,7 +50,7 @@ const OrderDetail = () => {
       console.error("Failed to cancel order:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to cancel order. Please try again."
+          "Failed to cancel order. Please try again.",
       );
     }
   };
@@ -59,7 +59,7 @@ const OrderDetail = () => {
   const displayRazorpay = async () => {
     try {
       const res = await loadScript(
-        "https://checkout.razorpay.com/v1/checkout.js"
+        "https://checkout.razorpay.com/v1/checkout.js",
       );
 
       if (!res) {
@@ -113,7 +113,7 @@ const OrderDetail = () => {
         window.location.href = "/login";
       } else {
         alert(
-          "An error occurred while processing your payment. Please try again."
+          "An error occurred while processing your payment. Please try again.",
         );
       }
     }
@@ -180,7 +180,7 @@ const OrderDetail = () => {
               <p className="text-sm text-gray-600">Status:</p>
               <p className="font-bold">{order.status}</p>
             </div>
-            {(order.status === "created" || order.status === "pending") && (
+            {(order.status === "CREATED" || order.status === "PENDING") && (
               <button
                 className="bg-red-600 py-3 px-6 rounded-md text-white font-medium hover:bg-red-700 transition ease-linear delay-100"
                 onClick={handleCancelOrder}
@@ -309,7 +309,7 @@ const OrderDetail = () => {
               </div>
             )}
           </div>
-          {order.paymentMethod === "online" && order.status === "created" ? (
+          {order.paymentMethod === "online" && order.status === "CREATED" ? (
             <div className="mt-8">
               <button
                 className="bg-[#6a9739] py-3 px-6 rounded-md text-white font-medium hover:bg-[#8bc34a] transition ease-linear delay-100"

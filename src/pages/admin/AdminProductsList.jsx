@@ -15,17 +15,22 @@ import { useNavigate } from "react-router-dom";
 const AdminProductsList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
-  async function fetchProducts() {
+  useEffect(() => {
+    fetchProducts(currentPage);
+  }, [currentPage]);
+
+  async function fetchProducts(page = 1) {
+    setLoading(true);
     try {
       const {
         data: { data },
-      } = await instance.get("/products");
+      } = await instance.get(`/admin/products?page=${page}`);
       setProducts(data.products);
+      setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -44,7 +49,7 @@ const AdminProductsList = () => {
     try {
       await instance.delete(`/admin/product/${productId}`);
       setProducts((prevProducts) =>
-        prevProducts.filter((product) => product._id !== productId)
+        prevProducts.filter((product) => product._id !== productId),
       );
       window.alert("Product deleted successfully");
     } catch (error) {
@@ -168,15 +173,15 @@ const AdminProductsList = () => {
                           {product.sale && product.sale_price ? (
                             <div className="flex items-center gap-3">
                               <span className="text-gray-500 line-through">
-                                ${product.price}
+                                ₹{product.price}
                               </span>
                               <span className="text-gray-900 font-semibold">
-                                ${product.sale_price}
+                                ₹{product.sale_price}
                               </span>
                             </div>
                           ) : (
                             <span className="text-gray-900 font-semibold">
-                              ${product.price}
+                              ₹{product.price}
                             </span>
                           )}
                         </td>
@@ -236,6 +241,41 @@ const AdminProductsList = () => {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1.5 text-sm border rounded ${
+                  currentPage === page
+                    ? "bg-nature-green text-white border-nature-green"
+                    : "border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

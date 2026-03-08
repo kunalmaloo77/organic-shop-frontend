@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useFormik } from "formik";
-import { X, Save, ArrowLeft } from "lucide-react";
+import { X, Save, ArrowLeft, Sparkles } from "lucide-react";
 import { createEditProdcutSchema } from "../../schemas";
 import { useNavigate } from "react-router-dom";
 import instance from "../../utils/axios";
@@ -10,6 +10,7 @@ import imageCompression from "browser-image-compression";
 const CreateProduct = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -80,12 +81,45 @@ const CreateProduct = () => {
   });
 
   const handleImageUpload = () => {
-    const file = fileInputRef.current.files[0];
+    const file = fileInputRef.current?.files[0];
     const imageUrl = URL.createObjectURL(file);
     setImagePreview(imageUrl);
-    formik.setFieldValue("fileType", file.type);
-    formik.setFieldValue("filename", file.name);
+    formik.setFieldValue("fileType", file?.type);
+    formik.setFieldValue("filename", file?.name);
     return () => URL.revokeObjectURL(imageUrl);
+  };
+
+  const handleGenerateWithAI = async () => {
+    const file = fileInputRef.current?.files[0];
+    if (!file) return;
+
+    try {
+      setIsGenerating(true);
+      const reader = new FileReader();
+      const imageBase64 = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const { data } = await instance.post("/admin/generate-ai-description", {
+        imageBase64,
+        imageType: file.type,
+        productName: formik.values.name || "",
+      });
+
+      const { description, category, name } = data.data;
+      if (description) formik.setFieldValue("description", description);
+      if (category && ["grocery", "juice"].includes(category)) {
+        formik.setFieldValue("title", category);
+      }
+      if (name) formik.setFieldValue("name", name);
+    } catch (error) {
+      console.error("Error generating description:", error);
+      alert("Failed to generate description. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const clearImage = () => {
@@ -230,7 +264,7 @@ const CreateProduct = () => {
                         sale: checked,
                         sale_price: checked ? formik.values.sale_price : "",
                       },
-                      true
+                      true,
                     );
                   }}
                   checked={formik.values.sale}
@@ -256,7 +290,7 @@ const CreateProduct = () => {
                         ...formik.values,
                         status: checked ? "active" : "inactive",
                       },
-                      true
+                      true,
                     );
                   }}
                   checked={formik.values.status === "active"}
@@ -374,6 +408,27 @@ const CreateProduct = () => {
                       alt="Preview"
                       className="object-cover  border border-gray-200 max-h-64"
                     />
+                  </div>
+                )}
+                {imagePreview && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={handleGenerateWithAI}
+                      disabled={isGenerating}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+                        isGenerating
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-nature-green text-white hover:bg-secondary-nature"
+                      }`}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      {isGenerating ? "Generating..." : "Generate with AI"}
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1">
+                      AI will fill in the description and category based on the
+                      image.
+                    </p>
                   </div>
                 )}
               </div>
