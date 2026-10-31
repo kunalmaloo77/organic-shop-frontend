@@ -22,6 +22,11 @@ export const createEditProdcutSchema = Yup.object({
     .typeError("Price must be a number")
     .positive("Price must be positive")
     .required("Product price is required"),
+  stock: Yup.number()
+    .typeError("Stock must be a number")
+    .integer("Stock must be a whole number")
+    .min(0, "Stock cannot be negative")
+    .required("Stock is required"),
   sale: Yup.boolean().default(false),
   sale_price: Yup.number().when("sale", {
     is: true,

@@ -14,8 +14,11 @@ import Footer from "../components/Footer";
 const CartPage = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.addtocart.items);
-  const handleChange = (e, id) => {
-    dispatch(updateItemCart({ id: id, quantity: e.target.value }));
+  const handleChange = (e, id, stock) => {
+    let quantity = parseInt(e.target.value);
+    if (Number.isNaN(quantity) || quantity < 1) quantity = 1;
+    if (stock !== undefined && quantity > stock) quantity = stock;
+    dispatch(updateItemCart({ id: id, quantity }));
   };
   function removeItem(key, quantity) {
     dispatch(removefromcartAction(key));
@@ -110,8 +113,11 @@ const CartPage = () => {
                                     name="qunatity"
                                     value={item.quantity}
                                     min={1}
+                                    max={item.stock}
                                     className="w-10 text-center"
-                                    onChange={(e) => handleChange(e, item._id)}
+                                    onChange={(e) =>
+                                      handleChange(e, item._id, item.stock)
+                                    }
                                   />
                                 </form>
                               </div>

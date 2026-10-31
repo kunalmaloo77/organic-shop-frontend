@@ -13,6 +13,7 @@ import { startLoading, stopLoading } from "../features/loadingSlice";
 import ProgressiveImage from "./ProgressiveImage";
 import instance from "../utils/axios";
 import Header from "./Header/Header";
+import { toast } from "react-toastify";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -48,12 +49,28 @@ const ProductPage = () => {
     );
   }
 
+  const outOfStock = !(product.stock > 0);
+
   const handleChange = (e) => {
     setValue(parseInt(e.target.value));
   };
 
   const handleAddToCart = (e) => {
     e.preventDefault();
+    if (!Number.isInteger(value) || value < 1) {
+      toast.error("Enter a valid quantity");
+      return;
+    }
+    const inCart = cartItems.find((item) => item._id === product._id);
+    const cartQuantity = inCart ? Number(inCart.quantity) : 0;
+    if (cartQuantity + value > product.stock) {
+      toast.error(
+        cartQuantity > 0
+          ? `Only ${product.stock} available, you already have ${cartQuantity} in your cart`
+          : `Only ${product.stock} available`,
+      );
+      return;
+    }
     let alreadyPresent = false;
     if (cartItems) {
       alreadyPresent = cartItems.find((item) => {
@@ -123,15 +140,18 @@ const ProductPage = () => {
                       className="w-14 p-2 mr-12"
                       value={value}
                       min={1}
+                      max={product.stock}
+                      disabled={outOfStock}
                       onChange={handleChange}
                     />
                   </div>
                   <button
                     type="submit"
                     name="add_to_cart"
-                    className="w-64 p-2 rounded-lg bg-[#6a9739] text-white inline hover:bg-[#8bc34a]"
+                    disabled={outOfStock}
+                    className="w-64 p-2 rounded-lg bg-[#6a9739] text-white inline hover:bg-[#8bc34a] disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    Add to Cart
+                    {outOfStock ? "Out of stock" : "Add to Cart"}
                   </button>
                 </form>
               </div>

@@ -234,7 +234,7 @@ const Orders = () => {
                               {item.productId.small_image_url ? (
                                 <img
                                   src={item.productId.small_image_url}
-                                  alt={item.productId.name}
+                                  alt={item.name ?? item.productId.name}
                                   className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                                 />
                               ) : (
@@ -247,7 +247,7 @@ const Orders = () => {
                               )}
                               <div>
                                 <h4 className="font-medium text-gray-900">
-                                  {item.productId.name}
+                                  {item.name ?? item.productId.name}
                                 </h4>
                                 <p className="text-sm text-gray-600">
                                   Quantity: {item.quantity}
@@ -257,12 +257,14 @@ const Orders = () => {
                             <div className="text-right">
                               <p className="text-lg font-semibold text-gray-900">
                                 $
-                                {(item.productId.price * item.quantity).toFixed(
-                                  2
-                                )}
+                                {(
+                                  (item.price ?? item.productId.price) *
+                                  item.quantity
+                                ).toFixed(2)}
                               </p>
                               <p className="text-sm text-gray-600">
-                                ${item.productId.price.toFixed(2)} each
+                                ${(item.price ?? item.productId.price).toFixed(2)}{" "}
+                                each
                               </p>
                             </div>
                           </div>
