@@ -4,7 +4,12 @@ const ProductCard = (props) => {
   return (
     <>
       <div className="flex flex-col">
-        <div className="w-full aspect-[1/1] overflow-hidden">
+        <div className="relative w-full aspect-[1/1] overflow-hidden">
+          {props.stock <= 0 && (
+            <span className="absolute top-2 left-2 z-10 rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white">
+              Out of stock
+            </span>
+          )}
           <img
             src={props.small_image_url}
             className="w-full h-full object-contain"

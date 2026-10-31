@@ -28,6 +28,7 @@ import OrdersList from "./pages/admin/OrdersList";
 import ForgotPassword from "./pages/ForgotPassword";
 import SuccessfullLogin from "./pages/SuccessfulLogin";
 import ResetPasswordPage from "./pages/ResetPassword";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -65,7 +66,7 @@ export default function App() {
         </Route>
 
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="*" element={<div>404 - Page Not Found</div>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );

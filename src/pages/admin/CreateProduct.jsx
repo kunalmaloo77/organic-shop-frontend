@@ -20,6 +20,7 @@ const CreateProduct = () => {
       title: "grocery",
       name: "",
       price: "",
+      stock: 0,
       sale: false,
       status: "active",
       sale_price: "",
@@ -245,6 +246,37 @@ const CreateProduct = () => {
                 {formik.touched.price && formik.errors.price && (
                   <p className="mt-1 text-sm text-red-500">
                     {formik.errors.price}
+                  </p>
+                )}
+              </div>
+
+              {/* Stock */}
+              <div>
+                <label
+                  htmlFor="stock"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Stock <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="stock"
+                  name="stock"
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="e.g., 10"
+                  className={`w-full px-4 py-2 border ${
+                    formik.touched.stock && formik.errors.stock
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.stock}
+                />
+                {formik.touched.stock && formik.errors.stock && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {formik.errors.stock}
                   </p>
                 )}
               </div>

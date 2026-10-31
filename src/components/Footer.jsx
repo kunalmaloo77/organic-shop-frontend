@@ -1,6 +1,11 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function Footer() {
+    const user = useSelector((state) => state.auth.user);
+    const adminLink = user?.role === 'admin' ? '/admin/dashboard' : '/admin/login';
+
     return (
         <div>
             <footer className="bg-footer-blue">
@@ -81,6 +86,8 @@ function Footer() {
                         <div>
                             <p className="text-white/60">Copyright © 2023 | Organic Store</p>
                         </div>
+                        <span className="text-white/20">|</span>
+                        <Link to={adminLink} className="text-white/30 text-sm transition ease-in-out delay-75 hover:text-white">Admin</Link>
                     </div>
                 </div>
             </footer>

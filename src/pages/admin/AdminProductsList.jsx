@@ -124,6 +124,9 @@ const AdminProductsList = () => {
                       Sale
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Stock
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -135,7 +138,7 @@ const AdminProductsList = () => {
                   {products.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="6"
+                        colSpan="7"
                         className="px-6 py-8 text-center text-gray-500"
                       >
                         No products found
@@ -193,6 +196,17 @@ const AdminProductsList = () => {
                           ) : (
                             <span className="text-gray-400 text-sm">-</span>
                           )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className={
+                              (product.stock ?? 0) > 0
+                                ? "text-gray-900 font-semibold"
+                                : "text-red-600 font-semibold"
+                            }
+                          >
+                            {product.stock ?? 0}
+                          </span>
                         </td>
                         <td className="px-6 py-4">
                           <span

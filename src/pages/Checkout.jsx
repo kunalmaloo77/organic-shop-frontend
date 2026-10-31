@@ -113,6 +113,11 @@ const Checkout = () => {
       if (error.response?.status === 401) {
         alert("Please login to continue");
         navigate("/login");
+      } else if (error.response?.status === 409) {
+        alert(
+          `${error.response.data?.message ?? "Some items are out of stock"}. Please update your cart.`,
+        );
+        navigate("/cart");
       } else {
         alert("Failed to process your order. Please try again.");
       }
